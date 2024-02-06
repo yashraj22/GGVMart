@@ -7,9 +7,7 @@ import { UserAuth, AuthContextProvider } from "./context/AuthContext";
 import Products from "@/components/Products";
 
 const HomePage = () => {
-
 	const { user, loginWithGoogle, logOut } = UserAuth();
-	
 
 	const handleLogout = async () => {
 		try {
@@ -37,8 +35,7 @@ const HomePage = () => {
 				<ChatUI />
 				<ProductForm />
 				<Products />
-
-		</div>
+			</div>
 		);
 	}
 

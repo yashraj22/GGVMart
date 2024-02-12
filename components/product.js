@@ -6,6 +6,8 @@ const ProductForm = () => {
 	const [title, setTitle] = useState("");
 	const [category, setCategory] = useState("");
 	const { user } = UserAuth();
+	const [messages, setMessages] = useState([]);	
+	const [inputValue, setInputValue] = useState("");
 
 	const handleTitleChange = (e) => {
 		setTitle(e.target.value);

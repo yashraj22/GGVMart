@@ -8,6 +8,8 @@ export async function POST(req, res) {
 		const data = await req.json();
 		const { title, category, ownerId } = data;
 
+		console.log(data);
+
 		// Create the message in the database
 		const product = await prisma.product.create({
 			data: {

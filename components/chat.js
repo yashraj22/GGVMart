@@ -20,7 +20,9 @@ const Chat = () => {
 			} catch (error) {
 				console.error("Error fetching messages:", error);
 			}
+
 		};
+		
 
 		fetchMessages();
 	}, []);

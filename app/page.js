@@ -1,11 +1,14 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
+import React from "react";
 import Image from "next/image";
 import ChatUI from "@/components/chat";
 import ProductForm from "@/components/product";
 import { UserAuth } from "./context/AuthContext";
 import { AuthContextProvider } from "./context/AuthContext";
+import { PrismaClient } from '@prisma/client';
+import Products from "@/components/Products";
+// const prisma = new PrismaClient();
+
 
 // const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjeGluaWN1cnpub3dqa2hjdXZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDcyMTgxMTQsImV4cCI6MjAyMjc5NDExNH0.hungTY7PjCtM_U29q9L_qFeXo8Y30AgAGHA3_vuRv5s'
 // const SUPABASE_URL = 'https://fcxinicurznowjkhcuvd.supabase.co'
@@ -13,6 +16,8 @@ import { AuthContextProvider } from "./context/AuthContext";
 // const supabase = createClient(SUPABASE_URL,SUPABASE_KEY);
 
 const HomePage = () => {
+
+
 	// const [user, setUser] = useState(null);
 
 	// useEffect(() => {
@@ -49,6 +54,7 @@ const HomePage = () => {
 	//   }
 	// };
 	const { user, loginWithGoogle, logOut } = UserAuth();
+	
 
 	const handleLogout = async () => {
 		try {
@@ -75,7 +81,11 @@ const HomePage = () => {
 				<button onClick={handleLogout}>LogOut</button>
 				<ChatUI />
 				<ProductForm />
-			</div>
+				<Products />
+				{/* {products.map(product => (
+          <ChatWithSeller key={product.id} productId={product.id} />
+        ))}			 */}
+		</div>
 		);
 	}
 

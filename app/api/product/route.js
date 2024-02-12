@@ -1,20 +1,12 @@
-// pages/api/product/[id].js
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export default async function handle(req, res) {
-	const { id } = req.query;
+export async function GET(_req) {
+	const products = await prisma.product.findMany();
+	console.log(products);
+	return Response.json({ products });
 
-	const product = await prisma.product.findUnique({
-		where: { id },
-	});
-
-	if (!product) {
-		return res.status(404).json({ error: "Product not found" });
-	}
-
-	const ownerId = product.ownerId;
-
-	res.json({ ownerId });
 }
+
+

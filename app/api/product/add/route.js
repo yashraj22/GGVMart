@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export async function POST(req, res) {
 	try {
 		const data = await req.json();
-		const { title, category, ownerId, chatId, userId } = data;
+		const { title, category, ownerId } = data;
 
 		// Create the message in the database
 		const product = await prisma.product.create({
@@ -17,17 +17,6 @@ export async function POST(req, res) {
 					connect: {
 						id: ownerId, // Replace with the actual owner id
 					},
-				},
-				chats: {
-					create: [
-						{
-							user: {
-								connect: {
-									id: userId, // Replace with the actual user id
-								},
-							},
-						},
-					],
 				},
 			},
 		});

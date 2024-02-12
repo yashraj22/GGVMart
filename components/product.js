@@ -1,9 +1,11 @@
 "use client";
+import { UserAuth } from "@/app/context/AuthContext";
 import React, { useState } from "react";
 
 const ProductForm = () => {
 	const [title, setTitle] = useState("");
 	const [category, setCategory] = useState("");
+	const { user } = UserAuth();
 
 	const handleTitleChange = (e) => {
 		setTitle(e.target.value);
@@ -25,9 +27,7 @@ const ProductForm = () => {
 				body: JSON.stringify({
 					title: title,
 					category: category,
-					ownerId: "5745a5dd-1d1e-468c-82e8-3cbcf98ec084",
-					chatId: "a8326c4b-b607-4b26-b20d-96c1dea638a2",
-					userId: "83ff34fe-7d3d-4498-8b5a-0566f2bb528b",
+					ownerId: user.id,
 				}),
 			});
 

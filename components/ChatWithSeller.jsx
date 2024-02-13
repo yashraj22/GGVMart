@@ -7,6 +7,10 @@ const ChatWithSeller = ({productId}) => {
 
     const {user} = UserAuth();
 
+    ChatWithSeller.propTypes = {
+        productId: PropTypes.number.isRequired,
+    };
+
     const handleChatWithSeller = async () => {
         try {
             // Create a new chat record in the database

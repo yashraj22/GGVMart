@@ -1,7 +1,8 @@
 "use client";
 
-import { useContext, createContext, useState, useEffect } from "react";
+import { useContext, createContext, useState, useEffect, useMemo } from "react";
 import { createClient } from "@supabase/supabase-js";
+import PropTypes from 'prop-types';
 
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_KEY;
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -47,10 +48,14 @@ export const AuthContextProvider = ({ children }) => {
 	}, []);
 
 	return (
-		<AuthContext.Provider value={{ user, loginWithGoogle, logOut }}>
+		<AuthContext.Provider value={useMemo(() => ({ user, loginWithGoogle, logOut }), [user])}>
 			{children}
 		</AuthContext.Provider>
 	);
+};
+
+AuthContextProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export const UserAuth = () => {

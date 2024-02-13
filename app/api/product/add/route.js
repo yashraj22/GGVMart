@@ -29,7 +29,7 @@ export async function POST(req, res) {
 		console.error("Error creating message:", error);
 		// Return a JSON response with an error message and status 500
 		return NextResponse.json(
-			{ error: "Internal Server Error" },
+			{ data },
 			{ status: 500 },
 		);
 	}

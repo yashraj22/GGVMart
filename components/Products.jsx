@@ -18,11 +18,6 @@ const Products = () => {
         fetchProducts();
     }, []);
 
-    // No need for the separate useEffect for logging, it was just for debugging
-    // useEffect(() => {
-    //     console.log(products);
-    // }, [products]);
-
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {products.map((product) => (

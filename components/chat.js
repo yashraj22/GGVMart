@@ -74,7 +74,7 @@ const Chat = () => {
 						{messages
 							.map((message, index) => (
 								<div
-									key={index}
+									key={ message +  index}
 									className="chat-message text-white">
 									{message}
 								</div>

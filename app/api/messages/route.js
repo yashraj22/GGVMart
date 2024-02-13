@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export async function POST(req, res) {
 	try {
 		const data = await req.json();
-		const { text, chatId } = data;
+		const { chatId } = data;
 
 		// Create the message in the database
 		const message = await prisma.message.findMany({
@@ -14,12 +14,14 @@ export async function POST(req, res) {
 				chatId: chatId,
 			},
 		});
+
+		return NextResponse.json(
+			{ message },
+			{ status: 500 },
+		);
+
 	} catch (error) {
 		console.error("Error fetching messages:", error);
 		// Return a JSON response with an error message and status 500
-		return NextResponse.json(
-			{ error: "Internal Server Error" },
-			{ status: 500 },
-		);
 	}
 }

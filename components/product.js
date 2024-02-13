@@ -6,8 +6,7 @@ const ProductForm = () => {
 	const [title, setTitle] = useState("");
 	const [category, setCategory] = useState("");
 	const { user } = UserAuth();
-	const [messages, setMessages] = useState([]);	
-	const [inputValue, setInputValue] = useState("");
+	const [messages, setMessages] = useState([]);
 
 	const handleTitleChange = (e) => {
 		setTitle(e.target.value);
@@ -41,7 +40,6 @@ const ProductForm = () => {
 
 			// Assuming the response from the server is an object with 'text' property
 			setMessages([message.text, ...messages]);
-			setInputValue("");
 		} catch (error) {
 			console.error("Error sending message:", error);
 		}
@@ -53,7 +51,7 @@ const ProductForm = () => {
 			<form
 				className="border-2 border-red-500 max-w-96 mt-2 pt-5 pb-5 flex flex-col items-center"
 				onSubmit={handleSubmit}>
-				<label>Title:</label>
+				<label htmlFor="title">Title:</label>
 				<input
 					className=" text-black"
 					type="text"
@@ -61,7 +59,7 @@ const ProductForm = () => {
 					onChange={handleTitleChange}
 				/>
 				<br />
-				<label>Category:</label>
+				<label htmlFor="category">Category:</label>
 				<input
 					className=" text-black"
 					type="text"

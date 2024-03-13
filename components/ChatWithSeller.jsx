@@ -13,6 +13,7 @@ const ChatWithSeller = ({productId}) => {
     // };
 
     const handleChatWithSeller = async () => {
+       
         console.log('====================================');
         console.log("hello");
         console.log('====================================');
@@ -32,7 +33,7 @@ const ChatWithSeller = ({productId}) => {
 
     return (
         <div>
-            <button className='text-gray-200' onClick={handleChatWithSeller} >
+            <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' onClick={handleChatWithSeller} >
                 Chat With Seller
             </button>
         </div>

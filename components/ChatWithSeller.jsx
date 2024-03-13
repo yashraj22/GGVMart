@@ -1,6 +1,7 @@
-"use client"
+
 import React from 'react'
 import { PrismaClient } from '@prisma/client';
+import PropTypes from 'prop-types';
 const prisma = new PrismaClient();
 import { UserAuth } from '@/app/context/AuthContext';
 
@@ -8,27 +9,41 @@ const ChatWithSeller = ({productId}) => {
 
     const {user} = UserAuth();
 
-    // ChatWithSeller.propTypes = {
-    //     productId: PropTypes.number.isRequired,
-    // };
+   
 
     const handleChatWithSeller = async () => {
        
         console.log('====================================');
         console.log("hello");
         console.log('====================================');
+       
+ ChatWithSeller.propTypes = {
+        productId: PropTypes.number.isRequired,
+    };
+
+
         try {
-            // Create a new chat record in the database
-            const chat = await prisma.chat.create({
-                data: {
+            const response = await fetch('/api/chart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
                     userId: user.id, // Replace with the actual user ID
                     productId: productId , // Replacep with the actual product ID
-                }
+                }),
             });
-            console.log('Chat record created:', chat);
+         
+            if (response.ok) {
+          
+            } else {
+          
+            }
         } catch (error) {
-            console.error('Error creating chat record:', error);
+            console.error('Error calling API:', error);
+        
         }
+
     }
 
     return (

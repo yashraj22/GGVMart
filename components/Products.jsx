@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ChatWithSeller from './ChatWithSeller';
 
 const Products = () => {
     const [products, setProducts] = useState([]);
@@ -34,8 +35,9 @@ const Products = () => {
                     <div className="px-6 pt-4 pb-2">
                         {/* Add any other details you'd like to include here, such as price if available */}
                         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Chat with Seller                    
+                            Chat with Seller      hulesh               
                         </button>
+                        <ChatWithSeller/>
                     </div>
                 </div>
             ))}

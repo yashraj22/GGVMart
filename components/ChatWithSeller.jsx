@@ -1,3 +1,4 @@
+"use client"
 import React from 'react'
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
@@ -7,11 +8,14 @@ const ChatWithSeller = ({productId}) => {
 
     const {user} = UserAuth();
 
-    ChatWithSeller.propTypes = {
-        productId: PropTypes.number.isRequired,
-    };
+    // ChatWithSeller.propTypes = {
+    //     productId: PropTypes.number.isRequired,
+    // };
 
     const handleChatWithSeller = async () => {
+        console.log('====================================');
+        console.log("hello");
+        console.log('====================================');
         try {
             // Create a new chat record in the database
             const chat = await prisma.chat.create({

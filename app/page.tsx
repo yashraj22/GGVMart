@@ -74,7 +74,7 @@ const HomePage = () => {
             <h2>Chats:</h2>
             <ul>
               {chats.map((chat: any) => (
-                <li key={chat.id}>
+                <li className="bg-red-300 my-2" key={chat.id}>
                   <p>Chat ID: {chat.id}</p>
                   <p>User ID: {chat.userId}</p>
                   <p>Product ID: {chat.productId}</p>

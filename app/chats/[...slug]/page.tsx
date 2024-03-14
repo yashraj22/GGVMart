@@ -3,7 +3,7 @@ import { useUserAuth } from "@/app/context/AuthContext";
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 export default function Page({ params }: { params: { slug: string } }) {
   const [newMessage, setNewMessage] = useState("");
   const { user, loginWithGoogle, logOut }: any = useUserAuth();
@@ -12,6 +12,39 @@ export default function Page({ params }: { params: { slug: string } }) {
   //   console.log(user);
   //   console.log('====================================');
   // }
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        if (user) {
+          const response = await fetch("/api/msg", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ chatId: params.slug[0] }), // Replace "YOUR_CHAT_ID" with the actual chatId
+          });
+          const data = await response.json();
+          if (response.ok) {
+            setMessages(data.messages);
+            console.log("=================data.messages===================");
+            console.log(data.messages);
+            console.log("====================================");
+          } else {
+            console.error("Failed to fetch messages:", data.error);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMessages();
+  }, [user]);
 
   const handleSendMessage = async (e: any) => {
     console.log("====================================");
@@ -56,6 +89,19 @@ export default function Page({ params }: { params: { slug: string } }) {
   return (
     <>
       chatId: {params.slug[0]} Owner id {params.slug[1]}
+      {messages && (
+        <div>
+          <h1>Messages</h1>
+          <ul>
+            {messages.map((message: any) => (
+              <li key={message.id}>
+                <p>{message.text}</p>
+                {/* Display other message details as needed */}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <div className="flex flex-col h-[600px] rounded-lg border border-gray-200 dark:border-gray-800">
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
           <div className="flex items-center space-x-4">

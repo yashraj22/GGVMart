@@ -28,6 +28,9 @@ const ChatUi = () => {
   }, []);
 
   const handleSendMessage = async (e: any) => {
+    console.log("====================================");
+    console.log("msg send ho rha hai");
+    console.log("====================================");
     e.preventDefault();
     try {
       const res = await fetch("/api/messages/send/", {

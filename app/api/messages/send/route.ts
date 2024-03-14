@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
-    const { text, chatId }: any = await req.json();
+    const { text, chatId, senderId, receiverId }: any = await req.json();
 
     // Create the message in the database
     const message = await prisma.message.create({
@@ -14,12 +14,12 @@ export async function POST(req: Request) {
         createdAt: new Date(), // Use the parsed date
         sender: {
           connect: {
-            id: "444",
+            id: senderId as string,
           },
         },
         receiver: {
           connect: {
-            id: "456",
+            id: receiverId as string,
           },
         },
         chat: {
@@ -43,7 +43,9 @@ export async function POST(req: Request) {
       },
     });
 
-    // Return a success response with the created message data
+    console.log("====================================");
+    console.log("msg sent");
+    console.log("====================================");
     return NextResponse.json({ message }, { status: 201 });
   } catch (error) {
     console.error("Error creating message:", error);

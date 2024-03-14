@@ -37,7 +37,11 @@ const Products = () => {
             {/* <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                             Chat with Seller      hulesh               
                         </button> */}
-            <ChatWithSeller productId={product.id} />
+
+            <ChatWithSeller
+              productId={product.id}
+              receiverId={product.ownerId}
+            />
           </div>
         </div>
       ))}

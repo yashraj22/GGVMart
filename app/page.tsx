@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
 import { AuthContextProvider, useUserAuth } from "./context/AuthContext";
@@ -10,6 +10,38 @@ import ProductForm from "./components/product";
 
 const HomePage = () => {
   const { user, loginWithGoogle, logOut }: any = useUserAuth();
+
+  const [chats, setChats] = useState([]);
+
+  useEffect(() => {
+    const fetchChats = async () => {
+      if (user) {
+        try {
+          const response = await fetch("/api/chats", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ userId: user.id }),
+          });
+          const data = await response.json();
+          if (response.ok) {
+            setChats(data.userChats);
+            console.log("=================data.userChats===================");
+            console.log(data.userChats);
+            console.log("================data.userChats====================");
+          } else {
+            console.error("Failed to fetch chats:", data.error);
+          }
+        } catch (error) {
+          console.error("Error fetching chats:", error);
+        } finally {
+        }
+      }
+    };
+
+    fetchChats();
+  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -34,7 +66,18 @@ const HomePage = () => {
           />
         </div>
         <button onClick={handleLogout}>LogOut</button>
-        <ChatUi />
+        {/* <ChatUi /> */}
+        <h2>Chats:</h2>
+        <ul>
+          {chats.map((chat: any) => (
+            <li key={chat.id}>
+              <p>Chat ID: {chat.id}</p>
+              <p>User ID: {chat.userId}</p>
+              <p>Product ID: {chat.productId}</p>
+              {/* Render more chat details as needed */}
+            </li>
+          ))}
+        </ul>
         <ProductForm />
         <Products />
       </div>
@@ -51,11 +94,7 @@ const HomePage = () => {
 };
 
 const Home = () => {
-  return (
-    <AuthContextProvider>
-      <HomePage />
-    </AuthContextProvider>
-  );
+  return <HomePage />;
 };
 
 export default Home;

@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 import { useUserAuth } from "@/app/context/AuthContext";
 import { navigate } from "../actions";
 
-const ChatWithSeller = ({ productId }: any) => {
+const ChatWithSeller = ({ productId, receiverId }: any) => {
   const { user }: any = useUserAuth();
 
   const handleChatWithSeller = async () => {
@@ -26,7 +26,7 @@ const ChatWithSeller = ({ productId }: any) => {
 
       if (response.ok) {
         const data: any = await response.json();
-        navigate(`chats/${data?.chat.id}`);
+        navigate(`chats/${data?.chat.id}/${receiverId}`);
 
         console.log("================chat id====================");
         console.log(data?.chat as any);
@@ -44,6 +44,7 @@ const ChatWithSeller = ({ productId }: any) => {
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         onClick={handleChatWithSeller}
       >
+        {/* {receiverId} */}
         Chat With Seller
       </button>
     </div>

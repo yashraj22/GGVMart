@@ -1,10 +1,17 @@
 "use client";
+import { useUserAuth } from "@/app/context/AuthContext";
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 export default function Page({ params }: { params: { slug: string } }) {
   const [newMessage, setNewMessage] = useState("");
+  const { user, loginWithGoogle, logOut }: any = useUserAuth();
+  // if(user){
+  //   console.log('===============user auth =====================');
+  //   console.log(user);
+  //   console.log('====================================');
+  // }
 
   const handleSendMessage = async (e: any) => {
     console.log("====================================");
@@ -19,9 +26,9 @@ export default function Page({ params }: { params: { slug: string } }) {
         },
         body: JSON.stringify({
           text: newMessage,
-          chatId: params.slug,
-          senderId: "5555",
-          receiverId: "456",
+          chatId: params.slug[0],
+          senderId: user?.id as string,
+          receiverId: params.slug[1] as string,
         }),
       });
 
@@ -48,7 +55,7 @@ export default function Page({ params }: { params: { slug: string } }) {
   };
   return (
     <>
-      chatId: {params.slug}
+      chatId: {params.slug[0]} Owner id {params.slug[1]}
       <div className="flex flex-col h-[600px] rounded-lg border border-gray-200 dark:border-gray-800">
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
           <div className="flex items-center space-x-4">

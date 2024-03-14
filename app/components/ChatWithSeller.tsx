@@ -2,6 +2,7 @@ import React from "react";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import { useUserAuth } from "@/app/context/AuthContext";
+import { navigate } from "../actions";
 
 const ChatWithSeller = ({ productId }: any) => {
   const { user }: any = useUserAuth();
@@ -24,6 +25,12 @@ const ChatWithSeller = ({ productId }: any) => {
       });
 
       if (response.ok) {
+        const data: any = await response.json();
+        navigate(`chats/${data?.chat.id}`);
+
+        console.log("================chat id====================");
+        console.log(data?.chat as any);
+        console.log("====================================");
       } else {
       }
     } catch (error) {

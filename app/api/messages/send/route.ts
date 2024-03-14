@@ -10,39 +10,12 @@ export async function POST(req: Request) {
     // Create the message in the database
     const message = await prisma.message.create({
       data: {
-        text, // Use the text from the request
-        createdAt: new Date(), // Use the parsed date
-        sender: {
-          connect: {
-            id: senderId as string,
-          },
-        },
-        receiver: {
-          connect: {
-            id: receiverId as string,
-          },
-        },
-        chat: {
-          connectOrCreate: {
-            create: {
-              id: chatId as any,
-              user: {
-                connect: {
-                  id: "5745a5dd-1d1e-468c-82e8-3cbcf98ec084",
-                } as any,
-              },
-              product: {
-                // Add your product details here
-              },
-            },
-            where: {
-              id: chatId,
-            },
-          },
-        },
+        text: text,
+        chatId: chatId as string,
+        senderId: "1e9994b6-e424-4f15-931e-e7ad9aaec851", // Replace with the appropriate sender ID
+        receiverId: "83ff34fe-7d3d-4498-8b5a-0566f2bb528b",
       },
     });
-
     console.log("====================================");
     console.log("msg sent");
     console.log("====================================");

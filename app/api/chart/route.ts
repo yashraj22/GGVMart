@@ -20,6 +20,9 @@ export async function POST(request: Request) {
     });
 
     // Return a success response with the created message data
+    console.log("=================chatId===================");
+    console.log(chat);
+    console.log("====================================");
     return new Response(JSON.stringify({ chat, status: 201 }));
   } catch (error) {
     console.error("Error creating message:", error);

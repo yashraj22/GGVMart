@@ -44,7 +44,7 @@ model Chat {
 }
 
 model Message {
-  id         String   @id @default(uuid()) @db.Uuid
+   id        Int    @id @default(autoincrement())
   text       String
   chatId     String   @db.Uuid
   chat       Chat     @relation(fields: [chatId], references: [id])
@@ -56,3 +56,4 @@ model Message {
 
   @@map("message")
 }
+

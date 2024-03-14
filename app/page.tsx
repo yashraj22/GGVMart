@@ -67,17 +67,24 @@ const HomePage = () => {
         </div>
         <button onClick={handleLogout}>LogOut</button>
         {/* <ChatUi /> */}
-        <h2>Chats:</h2>
-        <ul>
-          {chats.map((chat: any) => (
-            <li key={chat.id}>
-              <p>Chat ID: {chat.id}</p>
-              <p>User ID: {chat.userId}</p>
-              <p>Product ID: {chat.productId}</p>
-              {/* Render more chat details as needed */}
-            </li>
-          ))}
-        </ul>
+
+        {chats && (
+          <>
+            {" "}
+            <h2>Chats:</h2>
+            <ul>
+              {chats.map((chat: any) => (
+                <li key={chat.id}>
+                  <p>Chat ID: {chat.id}</p>
+                  <p>User ID: {chat.userId}</p>
+                  <p>Product ID: {chat.productId}</p>
+                  {/* Render more chat details as needed */}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+
         <ProductForm />
         <Products />
       </div>

@@ -12,8 +12,8 @@ export async function POST(req: Request) {
       data: {
         text: text,
         chatId: chatId as string,
-        senderId: "1e9994b6-e424-4f15-931e-e7ad9aaec851", // Replace with the appropriate sender ID
-        receiverId: "83ff34fe-7d3d-4498-8b5a-0566f2bb528b",
+        senderId: senderId,
+        receiverId: receiverId,
       },
     });
     console.log("====================================");

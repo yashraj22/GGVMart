@@ -8,16 +8,35 @@ export async function POST(request: Request) {
   console.log("====================================");
   console.log("hello from api");
   console.log("====================================");
+  var chat: {
+    id: string;
+    userId: string;
+    productId: string;
+  } = { id: "", userId: "", productId: "" };
   try {
     const { userId, productId } = await request.json();
 
-    // Create the message in the database
-    const chat = await prisma.chat.create({
-      data: {
-        userId: userId, // Assuming userId is available in the request body
-        productId: productId, // Assuming productId is available in the request body
+    const chatExists = await prisma.chat.findFirst({
+      where: {
+        productId: productId,
       },
     });
+
+    if (!chatExists) {
+      console.log("Product does not exist in the chat table");
+      // Handle the case when the product does not exist
+      // Create the message in the database
+      chat = await prisma.chat.create({
+        data: {
+          userId: userId, // Assuming userId is available in the request body
+          productId: productId, // Assuming productId is available in the request body
+        },
+      });
+    } else {
+      console.log("Product exists in the chat table");
+      // Handle the case when the product exists
+      chat = chatExists;
+    }
 
     // Return a success response with the created message data
     console.log("=================chatId===================");

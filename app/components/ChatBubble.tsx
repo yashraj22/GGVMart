@@ -33,7 +33,6 @@ const ChatBubble = ({
           <span className="sr-only">Sent at</span>
           {time}
         </time>
-        di
       </div>
     </div>
   );

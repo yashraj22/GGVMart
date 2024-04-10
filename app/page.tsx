@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useUserAuth } from "./context/AuthContext";
 import Products from "./components/Products";
 import ProductForm from "./components/ProductForm";
+import MyProducts from "./components/MyProducts";
 
 const HomePage = () => {
   const { user, loginWithGoogle, logOut }: any = useUserAuth();
@@ -38,6 +39,7 @@ const HomePage = () => {
     };
 
     fetchChats();
+    console.log(user);
   }, [user]);
 
   const handleLogout = async () => {
@@ -84,6 +86,8 @@ const HomePage = () => {
 
         <ProductForm />
         <Products />
+        <p>My Products</p>
+        <MyProducts />
       </div>
     );
   }
@@ -93,6 +97,7 @@ const HomePage = () => {
     <div>
       <h1>Posts</h1>
       <button onClick={loginWithGoogle}>Sign in with Google</button>
+      <button>My Products</button>
     </div>
   );
 };

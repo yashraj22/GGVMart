@@ -1,12 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-
-import { AuthContextProvider, useUserAuth } from "./context/AuthContext";
-
-import ChatUi from "./components/chat";
+import { useUserAuth } from "./context/AuthContext";
 import Products from "./components/Products";
-import ProductForm from "./components/product";
+import ProductForm from "./components/ProductForm";
 
 const HomePage = () => {
   const { user, loginWithGoogle, logOut }: any = useUserAuth();

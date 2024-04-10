@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import Image from "next/image";

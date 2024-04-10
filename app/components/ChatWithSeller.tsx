@@ -1,6 +1,5 @@
+"use client";
 import React from "react";
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
 import { useUserAuth } from "@/app/context/AuthContext";
 import { navigate } from "../actions";
 

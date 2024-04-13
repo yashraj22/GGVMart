@@ -12,7 +12,7 @@ import { createClient, SupabaseClient } from "@supabase/supabase-js";
 const SUPABASE_KEY: string | undefined = process.env.NEXT_PUBLIC_SUPABASE_KEY;
 const SUPABASE_URL: string | undefined = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
-interface User {
+export interface User {
   // Define your user type here if available
   // For example:
   // id: string;
@@ -23,6 +23,7 @@ interface AuthContextType {
   user: User | null;
   loginWithGoogle: () => Promise<void>;
   logOut: () => Promise<void>;
+  supabase: SupabaseClient;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -69,7 +70,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const contextValue = useMemo(
-    () => ({ user, loginWithGoogle, logOut }),
+    () => ({ user, loginWithGoogle, logOut, supabase }),
     [user],
   );
 

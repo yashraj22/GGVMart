@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useUserAuth } from "@/app/context/AuthContext";
-import { navigate } from "../actions";
+import { navigate } from "../util/actions";
 
 const ChatWithSeller = ({ productId, receiverId }: any) => {
   const { user }: any = useUserAuth();

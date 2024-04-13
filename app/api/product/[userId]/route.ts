@@ -5,10 +5,9 @@ const prisma = new PrismaClient();
 
 export default async function POST(
   req: Request,
-  { params }: { params: { slug: string } },
+  { params }: { params: { userId: string } },
 ) {
-  const slug: any = params.slug;
-  const id = slug;
+  const id: any = params.userId;
 
   const product = await prisma.product.findUnique({
     where: { id },

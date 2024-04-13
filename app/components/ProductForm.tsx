@@ -25,21 +25,36 @@ const ProductForm = () => {
   };
 
   const handleUpload = async (id: string, imageFiles: File[]) => {
-    console.log(imageFiles);
-    Promise.all(
-      imageFiles.map(async (file) => {
+    try {
+      const uploads = imageFiles.map(async (file) => {
+        // Generate a unique name for the image
+        const imageName = `${id}-${file.name}`;
+        console.log(imageName);
+
         const { data, error } = await supabase.storage
-          .from("Profile")
-          .upload(`${id}`, file);
+          .from("images")
+          .upload(id + "/" + file.name, file, {
+            cacheControl: "3600",
+            upsert: false,
+          });
+
         if (error) {
-          console.log(error.message);
-          // Handle error
-        } else {
-          // Handle success
-          const imageKey = data.key;
+          throw error;
         }
-      }),
-    );
+
+        const imageUrl = `${data.url}`;
+
+        return imageUrl;
+      });
+
+      // Wait for all uploads to finish
+      const uploadedImages = await Promise.all(uploads);
+
+      // Log the URLs of the uploaded images
+      console.log("Uploaded Images:", uploadedImages);
+    } catch (error: any) {
+      console.error("Error uploading images:", error.message);
+    }
   };
 
   const handleSubmit = async (e: any) => {
@@ -67,7 +82,34 @@ const ProductForm = () => {
       // Assuming the response from the server is an object with 'text' property
       setMessages([message.text, ...messages]);
 
-      handleUpload(message.product.id, imageFiles);
+      //   let file = imageFiles[0];
+
+      //   console.log('==========name==========================');
+      //   console.log('====================================');
+      //   console.log(user.id);
+      //   console.log('====================================');
+      //   console.log(file.name);
+      //   console.log('====================================');
+
+      //   // userid: Cooper
+      //   // Cooper/
+      //   // Cooper/myNameOfImage.png
+      //   // Lindsay/myNameOfImage.png
+
+      //   const { data, error } = await supabase
+      //     .storage
+      //     .from('images')
+      //     .upload(user.id+ "/hulesh", file)
+
+      //   if(data) {
+      // console.log('====================================');
+      // console.log(data);
+      // console.log('====================================');
+      //   } else {
+      //     console.log(error);
+      //   }
+
+      handleUpload(user.id, imageFiles);
     } catch (error) {
       console.error("Error sending message:", error);
     }

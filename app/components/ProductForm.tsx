@@ -9,6 +9,8 @@ const ProductForm = () => {
   const [messages, setMessages] = useState<any>([]);
   const { supabase }: any = useUserAuth();
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imageUrls, setImageUrls] = useState<{}>({});
+  var ImageUrls: string[] = [];
 
   const handleTitleChange = (e: any) => {
     setTitle(e.target.value);
@@ -24,7 +26,7 @@ const ProductForm = () => {
     setImageFiles(fileList);
   };
 
-  const handleUpload = async (id: string, imageFiles: File[]) => {
+  const handleUpload = async (id: string, pid: string, imageFiles: File[]) => {
     try {
       const uploads = imageFiles.map(async (file) => {
         // Generate a unique name for the image
@@ -33,7 +35,7 @@ const ProductForm = () => {
 
         const { data, error } = await supabase.storage
           .from("images")
-          .upload(id + "/" + file.name, file, {
+          .upload(id + "/" + pid + "/" + file.name, file, {
             cacheControl: "3600",
             upsert: false,
           });
@@ -42,21 +44,55 @@ const ProductForm = () => {
           throw error;
         }
 
-        const imageUrl = `${data.url}`;
+        //
+        const prefix =
+          "https://fcxinicurznowjkhcuvd.supabase.co/storage/v1/object/public/images/";
+        const imageUrl = prefix + "/" + id + "/" + pid + "/" + file.name;
+
+        ImageUrls = [...ImageUrls, imageUrl];
+
+        // const imageUrl = `${data.url}`;
 
         return imageUrl;
       });
 
       // Wait for all uploads to finish
       const uploadedImages = await Promise.all(uploads);
-
+      setImageUrls({ urls: ImageUrls });
       // Log the URLs of the uploaded images
       console.log("Uploaded Images:", uploadedImages);
+      console.log("Image URLs:", imageUrls);
+      addImages(pid);
     } catch (error: any) {
       console.error("Error uploading images:", error.message);
     }
   };
+  const addImages = async (id: string) => {
+    // Handle form submission logic here
+    try {
+      const res = await fetch("/api/product/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // Specify JSON content type
+        },
+        body: JSON.stringify({
+          id: id,
+          images: imageUrls,
+        }),
+      });
 
+      if (!res.ok) {
+        throw new Error(res.statusText);
+      }
+
+      const message = await res.json();
+      console.log(message);
+      // Assuming the response from the server is an object with 'text' property
+      setMessages([message.text, ...messages]);
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     // Handle form submission logic here
@@ -78,7 +114,7 @@ const ProductForm = () => {
       }
 
       const message = await res.json();
-
+      console.log(message);
       // Assuming the response from the server is an object with 'text' property
       setMessages([message.text, ...messages]);
 
@@ -109,7 +145,7 @@ const ProductForm = () => {
       //     console.log(error);
       //   }
 
-      handleUpload(user.id, imageFiles);
+      handleUpload(user.id, message.product.id, imageFiles);
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -128,6 +164,7 @@ const ProductForm = () => {
           type="text"
           value={title}
           onChange={handleTitleChange}
+          required
         />
         <br />
         <label htmlFor="category">Category:</label>
@@ -136,6 +173,7 @@ const ProductForm = () => {
           type="text"
           value={category}
           onChange={handleCategoryChange}
+          required
         />
         <label htmlFor="images">Upload Images:</label>
         <input
@@ -145,6 +183,7 @@ const ProductForm = () => {
           accept="image/*"
           onChange={handleFileChange}
           multiple
+          required
         />
         <br />
         <button type="submit">Submit</button>

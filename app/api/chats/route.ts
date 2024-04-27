@@ -1,9 +1,10 @@
 import { PrismaClient } from "@prisma/client";
+import { UUID } from "crypto";
 
 const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
-  const { userId } = await req.json();
+  const { userId }: { userId: UUID } = await req.json();
   try {
     const userChats = await prisma.chat.findMany({
       where: {

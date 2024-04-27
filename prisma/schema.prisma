@@ -45,7 +45,7 @@ model Chat {
 }
 
 model Message {
-   id        Int    @id @default(autoincrement())
+  id         String   @id @default(uuid()) @db.Uuid
   text       String
   chatId     String   @db.Uuid
   chat       Chat     @relation(fields: [chatId], references: [id])

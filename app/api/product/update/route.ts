@@ -5,13 +5,13 @@ const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
-    const { title, category, id, imagess } = await req.json();
+    const { title, category, id, images } = await req.json();
     const product = await prisma.product.update({
       where: { id },
       data: {
         title: title,
         category: category,
-        images: imagess,
+        images: images,
       },
     });
     return new NextResponse(JSON.stringify({ product: product }), {

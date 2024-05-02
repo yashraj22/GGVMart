@@ -27,7 +27,7 @@ model Product {
   ownerId  String @db.Uuid
   owner    User   @relation(name: "ProductOwner", fields: [ownerId], references: [id])
   category String
-  images   Json
+  images   Json?
   Chat     Chat[]
 
   @@map("product")

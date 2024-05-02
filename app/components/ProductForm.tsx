@@ -9,8 +9,7 @@ const ProductForm = () => {
   const [messages, setMessages] = useState<any>([]);
   const { supabase }: any = useUserAuth();
   const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [imageUrls, setImageUrls] = useState<{}>({});
-  var ImageUrls: string[] = [];
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
 
   const handleTitleChange = (e: any) => {
     setTitle(e.target.value);
@@ -49,18 +48,15 @@ const ProductForm = () => {
           "https://fcxinicurznowjkhcuvd.supabase.co/storage/v1/object/public/images/";
         const imageUrl = prefix + "/" + id + "/" + pid + "/" + file.name;
 
-        ImageUrls = [...ImageUrls, imageUrl];
-
-        // const imageUrl = `${data.url}`;
+        setImageUrls((prevUrls) => [...prevUrls, imageUrl]);
 
         return imageUrl;
       });
 
       // Wait for all uploads to finish
       const uploadedImages = await Promise.all(uploads);
-      setImageUrls({ urls: ImageUrls });
+      setImageUrls(uploadedImages);
       // Log the URLs of the uploaded images
-      console.log("Uploaded Images:", uploadedImages);
       console.log("Image URLs:", imageUrls);
       addImages(pid);
     } catch (error: any) {
@@ -117,33 +113,6 @@ const ProductForm = () => {
       console.log(message);
       // Assuming the response from the server is an object with 'text' property
       setMessages([message.text, ...messages]);
-
-      //   let file = imageFiles[0];
-
-      //   console.log('==========name==========================');
-      //   console.log('====================================');
-      //   console.log(user.id);
-      //   console.log('====================================');
-      //   console.log(file.name);
-      //   console.log('====================================');
-
-      //   // userid: Cooper
-      //   // Cooper/
-      //   // Cooper/myNameOfImage.png
-      //   // Lindsay/myNameOfImage.png
-
-      //   const { data, error } = await supabase
-      //     .storage
-      //     .from('images')
-      //     .upload(user.id+ "/hulesh", file)
-
-      //   if(data) {
-      // console.log('====================================');
-      // console.log(data);
-      // console.log('====================================');
-      //   } else {
-      //     console.log(error);
-      //   }
 
       handleUpload(user.id, message.product.id, imageFiles);
     } catch (error) {

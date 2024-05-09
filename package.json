@@ -16,10 +16,13 @@
     "lint:fix": "next lint --fix"
   },
   "dependencies": {
+    "@next/env": "^14.2.3",
+    "@next/swc-win32-x64-msvc": "^14.2.3",
     "@prisma/client": "^5.12.1",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-slot": "^1.0.2",
     "@supabase/supabase-js": "^2.39.3",
+    "caniuse-lite": "^1.0.30001616",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "lucide-react": "^0.357.0",

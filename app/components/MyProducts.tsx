@@ -1,7 +1,17 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
+
 import ChatWithSeller from "./ChatWithSeller";
 import { useUserAuth } from "../context/AuthContext";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const MyProducts = () => {
   const [products, setProducts] = useState([]);
@@ -27,28 +37,50 @@ const MyProducts = () => {
   }, [user]);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="container mx-auto max-w-7xl p-0 mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {products.map((product: any) => (
-        <div
-          key={product.id}
-          className="max-w-sm rounded overflow-hidden shadow-lg  hover:shadow-xl transition-shadow duration-300 ease-in-out"
-        >
-          <div className="px-6 py-4">
-            <div className="font-bold text-xl mb-2">{product.title}</div>
-            <p className="text-gray-700 text-base">
-              Category: {product.category}
-            </p>
-          </div>
-          <div className="px-6 pt-4 pb-2">
-            {/* Add any other details you'd like to include here, such as price if available */}
-            {/* <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Chat with Seller      hulesh               
-                        </button> */}
+        <div key={product.id} className="p-4">
+          <div className="rounded overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out h-full flex flex-col">
+            <div className="px-6 py-4 flex-1">
+              <Carousel className="w-full max-w-xs">
+                <CarouselContent>
+                  {product.images.map(
+                    (
+                      image,
+                      index, // Changed 'data.products[0].images' to 'product.images'
+                    ) => (
+                      <CarouselItem key={index}>
+                        <div className="p-1">
+                          <Card>
+                            <CardContent className="flex aspect-square items-center justify-center p-6">
+                              <Image
+                                src={image}
+                                alt={`Image ${index + 1}`}
+                                width={200}
+                                height={200}
+                              />
+                            </CardContent>
+                          </Card>
+                        </div>
+                      </CarouselItem>
+                    ),
+                  )}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
 
-            <ChatWithSeller
-              productId={product.id}
-              receiverId={product.ownerId}
-            />
+              <div className="font-bold text-xl mb-2">{product.title}</div>
+              <p className="text-gray-700 text-base">
+                Category: {product.category}
+              </p>
+            </div>
+            <div className="px-6 pt-4 pb-2">
+              <ChatWithSeller
+                productId={product.id}
+                receiverId={product.ownerId}
+              />
+            </div>
           </div>
         </div>
       ))}

@@ -1,27 +1,29 @@
 "use client";
 import { useUserAuth } from "@/app/context/AuthContext";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 const ProductForm = () => {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const { user }: any = useUserAuth();
-  const [messages, setMessages] = useState<any>([]);
+  const [messages, setMessages] = useState<string[]>([]);
   const { supabase }: any = useUserAuth();
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
-  const handleTitleChange = (e: any) => {
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
 
-  const handleCategoryChange = (e: any) => {
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCategory(e.target.value);
   };
 
-  const handleFileChange = (event: any) => {
-    const fileList: File[] = Array.from(event.target.files);
-    console.log(fileList);
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList: File[] = Array.from(event.target.files || []);
     setImageFiles(fileList);
   };
 
@@ -30,11 +32,9 @@ const ProductForm = () => {
       const uploads = imageFiles.map(async (file) => {
         // Generate a unique name for the image
         const imageName = `${id}-${file.name}`;
-        console.log(imageName);
-
         const { data, error } = await supabase.storage
           .from("images")
-          .upload(id + "/" + pid + "/" + file.name, file, {
+          .upload(`${id}/${pid}/${file.name}`, file, {
             cacheControl: "3600",
             upsert: false,
           });
@@ -43,12 +43,10 @@ const ProductForm = () => {
           throw error;
         }
 
-        //
+        // Construct the public URL
         const prefix =
           "https://fcxinicurznowjkhcuvd.supabase.co/storage/v1/object/public/images/";
-        const imageUrl = prefix + "/" + id + "/" + pid + "/" + file.name;
-
-        setImageUrls((prevUrls) => [...prevUrls, imageUrl]);
+        const imageUrl = `${prefix}/${id}/${pid}/${file.name}`;
 
         return imageUrl;
       });
@@ -56,51 +54,34 @@ const ProductForm = () => {
       // Wait for all uploads to finish
       const uploadedImages = await Promise.all(uploads);
       setImageUrls(uploadedImages);
-      // Log the URLs of the uploaded images
-      console.log("Image URLs:", imageUrls);
-      addImages(pid);
+
+      // Return the image URLs for further processing
+      return uploadedImages;
     } catch (error: any) {
       console.error("Error uploading images:", error.message);
+      return [];
     }
   };
-  const addImages = async (id: string) => {
-    // Handle form submission logic here
-    try {
-      const res = await fetch("/api/product/update", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json", // Specify JSON content type
-        },
-        body: JSON.stringify({
-          id: id,
-          images: imageUrls,
-        }),
-      });
 
-      if (!res.ok) {
-        throw new Error(res.statusText);
-      }
-
-      const message = await res.json();
-      console.log(message);
-      // Assuming the response from the server is an object with 'text' property
-      setMessages([message.text, ...messages]);
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
-  };
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission logic here
+
+    // Ensure images are uploaded first
+    if (imageFiles.length === 0) {
+      console.error("No image files selected.");
+      return;
+    }
+
     try {
+      // Create the product first to get the product ID
       const res = await fetch("/api/product/add", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", // Specify JSON content type
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          title: title,
-          category: category,
+          title,
+          category,
           ownerId: user?.id,
         }),
       });
@@ -110,13 +91,57 @@ const ProductForm = () => {
       }
 
       const message = await res.json();
-      console.log(message);
-      // Assuming the response from the server is an object with 'text' property
-      setMessages([message.text, ...messages]);
 
-      handleUpload(user.id, message.product.id, imageFiles);
+      setTitle("");
+      setCategory("");
+      setImageFiles([]);
+      setImageUrls([]);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+
+      toast({
+        title: "Product Added",
+        description: "Your product has been successfully added.",
+        className: "bg-green-500",
+      });
+
+      const productId = message.product.id;
+
+      // Upload images associated with the new product
+      const uploadedImageUrls = await handleUpload(
+        user.id,
+        productId,
+        imageFiles,
+      );
+
+      // Ensure there are valid uploaded image URLs
+      if (uploadedImageUrls.length === 0) {
+        console.error("No images were uploaded successfully.");
+        return;
+      }
+
+      // Update the product with the uploaded images
+      const updateRes = await fetch("/api/product/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: productId,
+          images: uploadedImageUrls,
+        }),
+      });
+
+      if (!updateRes.ok) {
+        throw new Error(updateRes.statusText);
+      }
+
+      const updateMessage = await updateRes.json();
+      setMessages([updateMessage.text, ...messages]);
     } catch (error) {
-      console.error("Error sending message:", error);
+      console.error("Error submitting form:", error);
     }
   };
 
@@ -129,7 +154,7 @@ const ProductForm = () => {
       >
         <label htmlFor="title">Title:</label>
         <input
-          className=" text-black"
+          className="text-black"
           type="text"
           value={title}
           onChange={handleTitleChange}
@@ -138,7 +163,7 @@ const ProductForm = () => {
         <br />
         <label htmlFor="category">Category:</label>
         <input
-          className=" text-black"
+          className="text-black"
           type="text"
           value={category}
           onChange={handleCategoryChange}
@@ -151,6 +176,7 @@ const ProductForm = () => {
           name="images"
           accept="image/*"
           onChange={handleFileChange}
+          ref={fileInputRef} // Reference to the file input element
           multiple
           required
         />

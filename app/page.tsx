@@ -86,8 +86,8 @@ const HomePage = () => {
 
         <ProductForm />
         <Products />
-        <p>My Products</p>
-        <MyProducts />
+        {/* <p>My Products</p>
+        <MyProducts /> */}
       </div>
     );
   }

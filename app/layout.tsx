@@ -1,7 +1,9 @@
+// layout.tsx
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthContextProvider } from "./context/AuthContext";
+import Navbar from "./components/Navbar"; // Adjust the import path based on your project structure
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,8 +20,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <AuthContextProvider>
-        {" "}
-        <body className={inter.className}>{children}</body>{" "}
+        <body className={inter.className}>
+          <Navbar /> {/* Include the Navbar here */}
+          {children}
+        </body>
       </AuthContextProvider>
     </html>
   );

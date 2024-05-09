@@ -1,7 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../util/prismaClient";
 import { UUID } from "crypto";
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   const { userId }: { userId: UUID } = await req.json();

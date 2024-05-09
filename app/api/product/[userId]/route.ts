@@ -1,7 +1,5 @@
 // pages/api/product/[id].js
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "../../../util/prismaClient";
 
 export default async function POST(
   req: Request,

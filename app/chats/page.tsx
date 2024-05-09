@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { createChatRoom } from "../util/chatUtils";
-import { PrismaClient } from "@prisma/client"; // Import Prisma client
+// import { PrismaClient } from "@prisma/client"; // Import Prisma client
 
-const prisma = new PrismaClient(); // Initialize Prisma client
+// const prisma = new PrismaClient(); // Initialize Prisma client
+import prisma from "../util/prismaClient";
 
 const Chats = () => {
   const [message, setMessage] = useState("");

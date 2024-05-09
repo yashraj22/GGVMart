@@ -26,7 +26,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white shadow-md">
-      <div className="container mx-auto flex items-center justify-between p-4">
+      <div className="container mx-auto max-w-7xl flex items-center justify-between p-4">
         {/* Logo Section */}
         <div className="flex items-center">
           <Link href="/">
@@ -53,33 +53,40 @@ const Navbar = () => {
           </li>
         </ul>
 
-        {/* User Avatar and Dropdown */}
-        <div>
+        {/* User Avatar, Add Product Button and Dropdown */}
+        <div className="flex items-center">
           {!user && <button onClick={loginWithGoogle}>Sign In</button>}
           {user && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Image
-                  src={user.user_metadata?.picture || "/default-avatar.png"}
-                  alt="User Avatar"
-                  width={40}
-                  height={40}
-                  className="rounded-full cursor-pointer"
-                />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-48">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Link href="/Profile">Profile</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
-                  Log out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <>
+              <Link href="/AddProduct">
+                <button className="ml-4 mr-10 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                  Add Product
+                </button>
+              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Image
+                    src={user.user_metadata?.picture || ""}
+                    alt="User Avatar"
+                    width={40}
+                    height={40}
+                    className="rounded-full cursor-pointer"
+                  />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-48">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Link href="/Profile">Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
           )}
         </div>
       </div>

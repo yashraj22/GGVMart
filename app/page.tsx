@@ -3,8 +3,6 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useUserAuth } from "./context/AuthContext";
 import Products from "./components/Products";
-import ProductForm from "./components/ProductForm";
-import MyProducts from "./components/MyProducts";
 
 const HomePage = () => {
   const { user, loginWithGoogle, logOut }: any = useUserAuth();
@@ -54,7 +52,7 @@ const HomePage = () => {
     // Display user's name and avatar if login is successful
     return (
       <div>
-        <h1>Posts</h1>
+        {/* <h1>Posts</h1>
         <div>
           <p>Welcome, {user.user_metadata?.full_name || ""}!</p>
           <Image
@@ -64,10 +62,10 @@ const HomePage = () => {
             alt="User avatar"
           />
         </div>
-        <button onClick={handleLogout}>LogOut</button>
+        <button onClick={handleLogout}>LogOut</button> */}
         {/* <ChatUi /> */}
 
-        {chats && (
+        {/* {chats && (
           <>
             {" "}
             <h2>Chats:</h2>
@@ -77,14 +75,14 @@ const HomePage = () => {
                   <p>Chat ID: {chat.id}</p>
                   <p>User ID: {chat.userId}</p>
                   <p>Product ID: {chat.productId}</p>
-                  {/* Render more chat details as needed */}
+                 
                 </li>
               ))}
             </ul>
           </>
-        )}
+        )} */}
 
-        <ProductForm />
+        {/* <ProductForm /> */}
         <Products />
         {/* <p>My Products</p>
         <MyProducts /> */}
@@ -95,9 +93,9 @@ const HomePage = () => {
   // If not logged in, show the login button
   return (
     <div>
-      <h1>Posts</h1>
+      {/* <h1>Posts</h1>
       <button onClick={loginWithGoogle}>Sign in with Google</button>
-      <button>My Products</button>
+      <button>My Products</button> */}
     </div>
   );
 };

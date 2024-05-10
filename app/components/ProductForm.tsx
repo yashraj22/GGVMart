@@ -12,6 +12,7 @@ const ProductForm = () => {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [price, setPrice] = useState("");
   const { toast } = useToast();
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,6 +21,10 @@ const ProductForm = () => {
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCategory(e.target.value);
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPrice(e.target.value);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,6 +87,7 @@ const ProductForm = () => {
         body: JSON.stringify({
           title,
           category,
+          price,
           ownerId: user?.id,
         }),
       });
@@ -96,6 +102,7 @@ const ProductForm = () => {
       setCategory("");
       setImageFiles([]);
       setImageUrls([]);
+      setPrice("");
 
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -146,42 +153,83 @@ const ProductForm = () => {
   };
 
   return (
-    <div>
-      <h1 className="mt-5">Add Product</h1>
-      <form
-        className="border-2 border-red-500 max-w-96 mt-2 pt-5 pb-5 flex flex-col items-center"
-        onSubmit={handleSubmit}
-      >
-        <label htmlFor="title">Title:</label>
-        <input
-          className="text-black"
-          type="text"
-          value={title}
-          onChange={handleTitleChange}
-          required
-        />
-        <br />
-        <label htmlFor="category">Category:</label>
-        <input
-          className="text-black"
-          type="text"
-          value={category}
-          onChange={handleCategoryChange}
-          required
-        />
-        <label htmlFor="images">Upload Images:</label>
-        <input
-          type="file"
-          id="images"
-          name="images"
-          accept="image/*"
-          onChange={handleFileChange}
-          ref={fileInputRef} // Reference to the file input element
-          multiple
-          required
-        />
-        <br />
-        <button type="submit">Submit</button>
+    <div className="container mx-auto max-w-lg p-6 bg-white shadow-md rounded-lg mt-10">
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Add Product</h1>
+      <form className="space-y-4" onSubmit={handleSubmit}>
+        <div className="flex flex-col">
+          <label
+            htmlFor="title"
+            className="text-sm font-semibold text-gray-600 mb-2"
+          >
+            Title:
+          </label>
+          <input
+            id="title"
+            type="text"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={title}
+            onChange={handleTitleChange}
+            required
+          />
+        </div>
+        <div className="flex flex-col">
+          <label
+            htmlFor="category"
+            className="text-sm font-semibold text-gray-600 mb-2"
+          >
+            Category:
+          </label>
+          <input
+            id="category"
+            type="text"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={category}
+            onChange={handleCategoryChange}
+            required
+          />
+        </div>
+        {/* Price */}
+        <div className="flex flex-col">
+          <label
+            htmlFor="price"
+            className="text-sm font-semibold text-gray-600 mb-2"
+          >
+            Price:
+          </label>
+          <input
+            id="price"
+            type="text"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={price}
+            onChange={handlePriceChange}
+            required
+          />
+        </div>
+        <div className="flex flex-col">
+          <label
+            htmlFor="images"
+            className="text-sm font-semibold text-gray-600 mb-2"
+          >
+            Upload Images:
+          </label>
+          <input
+            type="file"
+            id="images"
+            name="images"
+            accept="image/*"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={handleFileChange}
+            ref={fileInputRef}
+            multiple
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-200"
+        >
+          Submit
+        </button>
       </form>
     </div>
   );

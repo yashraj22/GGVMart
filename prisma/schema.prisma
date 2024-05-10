@@ -8,6 +8,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -27,6 +28,7 @@ model Product {
   ownerId  String @db.Uuid
   owner    User   @relation(name: "ProductOwner", fields: [ownerId], references: [id])
   category String
+  price    String
   images   Json?
   Chat     Chat[]
 

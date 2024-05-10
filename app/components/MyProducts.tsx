@@ -2,8 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
-
-import ChatWithSeller from "./ChatWithSeller";
 import { useUserAuth } from "../context/AuthContext";
 import {
   Carousel,
@@ -25,7 +23,6 @@ const MyProducts = () => {
             `/api/product/myproduct/${user.identities[0].user_id}`,
           );
           const data = await response.json();
-          // Set the products using the 'products' property of the data object
           setProducts(data.products); // Assuming 'data.products' is the array
         } catch (error) {
           console.error("Failed to fetch products:", error);
@@ -36,54 +33,66 @@ const MyProducts = () => {
     }
   }, [user]);
 
+  const renderProductCards = () => {
+    return products.map((product: any) => (
+      <div key={product.id} className="p-4">
+        <Card className="max-w-sm bg-white shadow-lg rounded-lg overflow-hidden h-full flex flex-col">
+          <div className="relative">
+            <Carousel className="w-full">
+              <CarouselContent>
+                {product.images.map((image, index) => (
+                  <CarouselItem key={index}>
+                    <Image
+                      src={image}
+                      alt={`Product Image ${index + 1}`}
+                      className="w-full h-40 object-cover"
+                      width={320}
+                      height={160}
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition duration-200" />
+              <CarouselNext className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition duration-200" />
+            </Carousel>
+          </div>
+          <CardContent className="p-4">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              {product.title}
+            </h1>
+            <p className="text-gray-600 mb-4">Its {product.condition} used.</p>
+            <div className="flex justify-start items-center mb-4 space-x-2">
+              <span className="text-sm text-gray-500">Category:</span>
+              <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">
+                {product.category}
+              </span>
+              <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">
+                Electronics
+              </span>
+            </div>
+            <div className="flex justify-between items-center mt-4">
+              <h1 className="text-xl font-semibold text-gray-800">
+                {product.price} Rupee
+              </h1>
+              <button
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200"
+                onClick={() => {
+                  // Add functionality to open message/chat window
+                  // Modify this as per your routing or chat opening logic
+                }}
+              >
+                Messages
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    ));
+  };
+
   return (
     <div className="container mx-auto max-w-7xl p-0 mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {products.map((product: any) => (
-        <div key={product.id} className="p-4">
-          <div className="rounded overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out h-full flex flex-col">
-            <div className="px-6 py-4 flex-1">
-              <Carousel className="w-full max-w-xs">
-                <CarouselContent>
-                  {product.images.map(
-                    (
-                      image,
-                      index, // Changed 'data.products[0].images' to 'product.images'
-                    ) => (
-                      <CarouselItem key={index}>
-                        <div className="p-1">
-                          <Card>
-                            <CardContent className="flex aspect-square items-center justify-center p-6">
-                              <Image
-                                src={image}
-                                alt={`Image ${index + 1}`}
-                                width={200}
-                                height={200}
-                              />
-                            </CardContent>
-                          </Card>
-                        </div>
-                      </CarouselItem>
-                    ),
-                  )}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-              </Carousel>
-
-              <div className="font-bold text-xl mb-2">{product.title}</div>
-              <p className="text-gray-700 text-base">
-                Category: {product.category}
-              </p>
-            </div>
-            <div className="px-6 pt-4 pb-2">
-              <ChatWithSeller
-                productId={product.id}
-                receiverId={product.ownerId}
-              />
-            </div>
-          </div>
-        </div>
-      ))}
+      {renderProductCards()}
     </div>
   );
 };

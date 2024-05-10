@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import Image from "next/image";
+
 const ChatBubble = ({
   isSender,
   avatarSrc,
@@ -11,7 +11,7 @@ const ChatBubble = ({
   time,
 }: {
   isSender: boolean;
-  avatarSrc: string;
+  avatarSrc?: string;
   avatarAlt: string;
   initials: string;
   message: string;
@@ -19,16 +19,33 @@ const ChatBubble = ({
 }) => {
   return (
     <div
-      className={`flex items-start space-x-4 ${isSender ? "justify-end" : ""}`}
+      className={`flex items-end space-x-4 mb-4 ${
+        isSender ? "justify-start flex-row-reverse" : ""
+      }`}
     >
-      {/* <Avatar className={`w-8 h-8 ${isSender ? "order-2" : ""}`}>
-        <AvatarImage alt={avatarAlt} src={avatarSrc} />
-        <AvatarFallback>{initials}</AvatarFallback>
-      </Avatar> */}
-      <div className={`w-8 h-8 ${isSender ? "order-2" : ""}`}>
-        <Image alt={avatarAlt} src={avatarSrc} width={100} height={100} />
+      <div className={`w-8 h-8 ${isSender ? "ml-4" : "mr-2"}`}>
+        {avatarSrc ? (
+          <Image
+            className="rounded-full"
+            alt={avatarAlt}
+            src={avatarSrc}
+            width={100}
+            height={100}
+          />
+        ) : (
+          <div className="bg-gray-300 flex items-center justify-center w-full h-full rounded-full">
+            <span className="text-sm font-bold">{initials}</span>
+          </div>
+        )}
       </div>
-      <div className="bg-gray-100 rounded-lg p-4 dark:bg-gray-800">
+
+      <div
+        className={`rounded-lg p-4 max-w-xs ${
+          isSender
+            ? "bg-blue-100 dark:bg-blue-800"
+            : "bg-gray-100 dark:bg-gray-800"
+        }`}
+      >
         <p className="text-sm">{message}</p>
         <time className="block mt-2 text-xs text-gray-500 dark:text-gray-400">
           <span className="sr-only">Sent at</span>

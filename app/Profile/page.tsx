@@ -1,12 +1,11 @@
 // Profile directory with page.tsx file
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useUserAuth } from "../context/AuthContext";
 import MyProducts from "../components/MyProducts";
 
 const Profile = () => {
   const { user }: any = useUserAuth();
-  const [ads, setAds] = useState([]);
 
   useEffect(() => {
     const fetchAds = async () => {
@@ -17,7 +16,6 @@ const Profile = () => {
           );
           const data = await response.json();
           if (response.ok) {
-            setAds(data.products || []);
           } else {
             throw new Error(data.error || "Failed to fetch ads");
           }
@@ -41,25 +39,7 @@ const Profile = () => {
           <strong>Email:</strong> {user?.email || "N/A"}
         </p>
       </div>
-      <div className="user-ads">
-        <h2 className="text-2xl font-bold mb-4">My Ads</h2>
-        {ads.length > 0 ? (
-          <ul>
-            {ads.map((ad: any) => (
-              <li key={ad.id} className="mb-4">
-                <p className="text-lg">
-                  <strong>Title:</strong> {ad.title}
-                </p>
-                <p className="text-lg">
-                  <strong>Description:</strong> {ad.description}
-                </p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-lg">No ads posted yet.</p>
-        )}
-      </div>
+
       <div>
         <p>My Products</p>
         <MyProducts />

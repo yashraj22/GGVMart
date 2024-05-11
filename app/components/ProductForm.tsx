@@ -13,6 +13,8 @@ const ProductForm = () => {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [price, setPrice] = useState("");
+  const [description, setDescription] = useState("");
+  const [text, setText] = useState("");
   const { toast } = useToast();
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,6 +27,10 @@ const ProductForm = () => {
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPrice(e.target.value);
+  };
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDescription(e.target.value);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,6 +74,26 @@ const ProductForm = () => {
     }
   };
 
+  const fixDescription = async () => {
+    try {
+      const res = await fetch("/api/fixText", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: description }), // Ensure text is passed as JSON
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch generated text");
+
+      const data = await res.json();
+      console.log(data.candidates[0].content.parts[0].text); // Log the specific part of the response data
+
+      // Set the text input to the enhanced sentence from the response
+      setDescription(data.candidates[0].content.parts[0].text);
+    } catch (error) {
+      console.error("Error fetching generated text:", error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -88,6 +114,7 @@ const ProductForm = () => {
           title,
           category,
           price,
+          description,
           ownerId: user?.id,
         }),
       });
@@ -102,6 +129,7 @@ const ProductForm = () => {
       setCategory("");
       setImageFiles([]);
       setImageUrls([]);
+      setDescription("");
       setPrice("");
 
       if (fileInputRef.current) {
@@ -172,6 +200,28 @@ const ProductForm = () => {
             required
           />
         </div>
+
+        {/* Description: */}
+
+        <div>
+          <div className="flex flex-col">
+            <label
+              htmlFor="description"
+              className="text-sm font-semibold text-gray-600 mb-2"
+            >
+              Description:
+            </label>
+            <input
+              id="description"
+              type="text"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={description}
+              onChange={handleDescriptionChange}
+              required
+            />
+          </div>
+        </div>
+
         <div className="flex flex-col">
           <label
             htmlFor="category"
@@ -231,6 +281,9 @@ const ProductForm = () => {
           Submit
         </button>
       </form>
+      <div>
+        <button onClick={fixDescription}>fix Description</button>
+      </div>
     </div>
   );
 };

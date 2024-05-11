@@ -31,7 +31,7 @@ model Product {
   price    String
   description String
   images   Json?
-  Chat     Chat[]
+  Chat     Chat[] 
 
   @@map("product")
 }
@@ -41,8 +41,8 @@ model Chat {
   userId    String    @db.Uuid
   user      User      @relation(name: "UserChats", fields: [userId], references: [id])
   productId String    @db.Uuid
-  product   Product   @relation(fields: [productId], references: [id])
-  messages  Message[]
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  messages  Message[] 
 
   @@map("chat")
 }
@@ -51,7 +51,7 @@ model Message {
   id         String   @id @default(uuid()) @db.Uuid
   text       String
   chatId     String   @db.Uuid
-  chat       Chat     @relation(fields: [chatId], references: [id])
+  chat       Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
   senderId   String   @db.Uuid
   sender     User     @relation(name: "SentMessages", fields: [senderId], references: [id])
   receiverId String   @db.Uuid

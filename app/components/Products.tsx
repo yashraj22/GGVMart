@@ -77,9 +77,7 @@ const Products = () => {
               <h1 className="text-2xl font-bold text-gray-900 mb-2">
                 {product.title}
               </h1>
-              <p className="text-gray-600 mb-4">
-                Its {product.condition} used.
-              </p>
+              <p className="text-gray-600 mb-4">{product.description}</p>
               <div className="flex justify-start items-center mb-4 space-x-2">
                 <span className="text-sm text-gray-500">Category:</span>
                 <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">
@@ -91,7 +89,7 @@ const Products = () => {
               </div>
               <div className="flex justify-between items-center mt-4">
                 <h1 className="text-xl font-semibold text-gray-800">
-                  {product.price} Rupee
+                  ₹ {product.price}
                 </h1>
                 <ChatWithSeller
                   productId={product.id}

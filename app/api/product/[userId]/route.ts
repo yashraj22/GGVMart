@@ -2,7 +2,7 @@
 import prisma from "../../../util/prismaClient";
 
 export default async function POST(
-  req: Request,
+  req: any,
   { params }: { params: { userId: string } },
 ) {
   const id: any = params.userId;

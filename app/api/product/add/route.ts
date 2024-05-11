@@ -2,7 +2,7 @@ import prisma from "../../../util/prismaClient";
 
 export async function POST(req: Request) {
   try {
-    const { title, category, price, ownerId } = await req.json();
+    const { title, category, price, description, ownerId } = await req.json();
 
     // Create the message in the database
     const product = await prisma.product.create({
@@ -10,6 +10,7 @@ export async function POST(req: Request) {
         title: title, // Replace with your actual product title
         category: category, // Replace with your actual product category
         price: price, // Replace with your actual product price
+        description: description,
         owner: {
           connect: {
             id: ownerId, // Replace with the actual owner id

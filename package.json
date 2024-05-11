@@ -24,6 +24,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-toast": "^1.1.5",
     "@supabase/supabase-js": "^2.39.3",
+    "axios": "^1.6.8",
     "caniuse-lite": "^1.0.30001616",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",

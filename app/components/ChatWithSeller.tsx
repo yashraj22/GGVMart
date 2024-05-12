@@ -40,11 +40,10 @@ const ChatWithSeller = ({ productId, receiverId }: any) => {
   return (
     <div>
       <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        className="border text-white font-bold border-gray-300 rounded-sm px-4 py-1 bg-gray-800 hover:bg-gray-700"
         onClick={handleChatWithSeller}
       >
-        {/* {receiverId} */}
-        Chat With Seller
+        Chat
       </button>
     </div>
   );

@@ -59,8 +59,8 @@ const Navbar = () => {
           {user && (
             <>
               <Link href="/AddProduct">
-                <button className="ml-4 mr-10 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                  Add Product
+                <button className="ml-4 mr-10 border border-gray-800 text-gray-800 bg-white  rounded-full text-xl  font-bold py-1 px-8 ">
+                  SELL
                 </button>
               </Link>
               <DropdownMenu>

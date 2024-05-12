@@ -2,6 +2,8 @@
 import { useUserAuth } from "@/app/context/AuthContext";
 import React, { useState, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { HiSparkles } from "react-icons/hi2";
+import { useRouter } from "next/navigation";
 
 const ProductForm = () => {
   const [title, setTitle] = useState("");
@@ -14,14 +16,14 @@ const ProductForm = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
-  const [text, setText] = useState("");
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
 
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCategory(e.target.value);
   };
 
@@ -103,6 +105,17 @@ const ProductForm = () => {
       return;
     }
 
+    // This will check that user put some valid amount in the price field. okay buddy.
+    if (isNaN(Number(price))) {
+      toast({
+        title: "Invalid Price",
+        description: "Please enter a valid price.",
+        className: "bg-red-500",
+      });
+
+      return;
+    }
+
     try {
       // Create the product first to get the product ID
       const res = await fetch("/api/product/add", {
@@ -169,6 +182,8 @@ const ProductForm = () => {
         }),
       });
 
+      router.push("/");
+
       if (!updateRes.ok) {
         throw new Error(updateRes.statusText);
       }
@@ -194,7 +209,7 @@ const ProductForm = () => {
           <input
             id="title"
             type="text"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-2  border-b-2 border-dotted  border-gray-300 text-gray-800 focus:outline-none "
             value={title}
             onChange={handleTitleChange}
             required
@@ -211,14 +226,21 @@ const ProductForm = () => {
             >
               Description:
             </label>
-            <input
-              id="description"
-              type="text"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={description}
-              onChange={handleDescriptionChange}
-              required
-            />
+
+            <div className="flex border-b-2 border-dotted border-gray-300 ">
+              <input
+                id="description"
+                type="text"
+                className="w-full px-2 py-2 outline-none  rounded-md text-gray-800 focus:outline-none "
+                value={description}
+                onChange={handleDescriptionChange}
+                required
+              />
+
+              <button type="button" onClick={fixDescription}>
+                <HiSparkles className="mr-5 text-xl text-[#608ee4]" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -229,15 +251,24 @@ const ProductForm = () => {
           >
             Category:
           </label>
-          <input
+          <select
             id="category"
-            type="text"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full  py-3 border-b-2 border-dotted border-gray-300  text-gray-800 focus:outline-none "
             value={category}
             onChange={handleCategoryChange}
             required
-          />
+          >
+            <option className="py-3" value="">
+              Select Category of product
+            </option>
+            <option value="Smartphones">Smartphones</option>
+            <option value="Households">Household</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Stationary">Stationary</option>
+            <option value="Others">Other</option>
+          </select>
         </div>
+
         {/* Price */}
         <div className="flex flex-col">
           <label
@@ -249,7 +280,7 @@ const ProductForm = () => {
           <input
             id="price"
             type="text"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-2 py-2 border-b-2 border-dotted border-gray-300  text-gray-800 focus:outline-none "
             value={price}
             onChange={handlePriceChange}
             required
@@ -267,7 +298,7 @@ const ProductForm = () => {
             id="images"
             name="images"
             accept="image/*"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full  py-2 mb-5 rounded-md focus:outline-none"
             onChange={handleFileChange}
             ref={fileInputRef}
             multiple
@@ -276,14 +307,11 @@ const ProductForm = () => {
         </div>
         <button
           type="submit"
-          className="w-full py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-200"
+          className="w-1/2 py-2 bg-gray-800 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-200"
         >
           Submit
         </button>
       </form>
-      <div>
-        <button onClick={fixDescription}>fix Description</button>
-      </div>
     </div>
   );
 };

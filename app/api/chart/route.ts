@@ -19,6 +19,7 @@ export async function POST(request: Request) {
     const chatExists = await prisma.chat.findFirst({
       where: {
         productId: productId,
+        userId: userId,
       },
     });
 

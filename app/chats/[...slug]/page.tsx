@@ -110,7 +110,7 @@ export default function Page({ params }: { params: { slug: string } }) {
           </Button>
         </div>
         {/* Scrollable chat messages container */}
-        <div className="flex-1 p-4 gap-4 overflow-y-auto" ref={scrollRef}>
+        <div className="flex-1 p-4 gap-4 overflow-y-scroll relative" ref={scrollRef}>
           {messages.map((message: any) => {
             const isSender = message.senderId === user.id;
             return (

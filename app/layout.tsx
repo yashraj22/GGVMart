@@ -5,6 +5,7 @@ import "./globals.css";
 import { AuthContextProvider } from "./context/AuthContext";
 import Navbar from "./components/Navbar"; // Adjust the import path based on your project structure
 import { Toaster } from "@/components/ui/toaster";
+import { SearchProvider } from "./context/SearchContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,11 +22,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <AuthContextProvider>
-        <body className={inter.className}>
-          <Navbar /> {/* Include the Navbar here */}
-          <Toaster />
-          {children}
-        </body>
+        <SearchProvider>
+          <body className={inter.className}>
+            <Navbar /> {/* Include the Navbar here */}
+            <Toaster />
+            {children}
+          </body>
+        </SearchProvider>
       </AuthContextProvider>
     </html>
   );

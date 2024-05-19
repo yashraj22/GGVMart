@@ -10,31 +10,7 @@ const HomePage = () => {
   const { searchQuery, setSearchQuery, products, setProducts } = useSearch();
 
   const [chats, setChats] = useState([]);
-  // const [products, setProducts] = useState([]);
-  // const [searchQuery, setSearchQuery] = useState(""); // State for the search query
-
-  // const handleSearch = async () => {
-  //   try {
-  //     const response = await fetch("/api/product", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ search: searchQuery }), // Use the searchQuery state
-  //     });
-
-  //     if (!response.ok) {
-  //       const text = await response.text(); // Get the response text
-  //       throw new Error(`HTTP error! Status: ${response.status}, Message: ${text}`);
-  //     }
-
-  //     const data = await response.json();
-  //     console.log(data);
-  //     setProducts(data.products); // Set the filtered products based on the search query
-  //   } catch (error) {
-  //     console.error("Error fetching products:", error);
-  //   }
-  // };
+  
 
   useEffect(() => {
     const fetchChats = async () => {

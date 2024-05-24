@@ -3,6 +3,8 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { RiSearch2Line } from "react-icons/ri";
+
 import { useUserAuth } from "../context/AuthContext";
 import {
   DropdownMenu,
@@ -12,9 +14,50 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useSearch } from "../context/SearchContext";
 
 const Navbar = () => {
   const { user, loginWithGoogle, logOut }: any = useUserAuth();
+
+  const { searchQuery, setSearchQuery, resetSearch, setProducts }: any =
+    useSearch();
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleSearchKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (event.key === "Enter") {
+      handleSearchClick();
+    }
+  };
+
+  const handleSearchClick = async () => {
+    try {
+      const response = await fetch("/api/product", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ search: searchQuery }), // Use the searchQuery state
+      });
+
+      if (!response.ok) {
+        const text = await response.text(); // Get the response text
+        throw new Error(
+          `HTTP error! Status: ${response.status}, Message: ${text}`,
+        );
+      }
+
+      const data = await response.json();
+      console.log(data);
+      setProducts(data.products); // Set the filtered products based on the search query
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -29,15 +72,17 @@ const Navbar = () => {
       <div className="container mx-auto max-w-7xl flex items-center justify-between p-4">
         {/* Logo Section */}
         <div className="flex items-center">
-          <Link href="/">
-            <span className="text-lg font-semibold text-gray-800">GGVMart</span>
+          <Link href="/" onClick={resetSearch}>
+            <span className="text-lg font-semibold mr-10 text-gray-800">
+              GGVMart
+            </span>
           </Link>
         </div>
 
         {/* Navigation Links */}
-        <ul className="flex space-x-6">
+        {/* <ul className="flex space-x-6">
           <li>
-            <Link href="/">
+            <Link href="/" onClick={resetSearch}>
               <p className="text-gray-600 hover:text-blue-600">Home</p>
             </Link>
           </li>
@@ -51,7 +96,28 @@ const Navbar = () => {
               <p className="text-gray-600 hover:text-blue-600">Contact</p>
             </Link>
           </li>
-        </ul>
+        </ul> */}
+
+        {/* Search Section */}
+        <div className="flex items-center border rounded-full px-5 flex-grow">
+          <div className="flex justify-center items-center flex-grow">
+            <RiSearch2Line className="text-xl" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              onKeyDown={handleSearchKeyDown}
+              placeholder="Search for products ..."
+              className=" border-gray-300 outline-none w-full  rounded-md p-2 py-2 mr-2"
+            />
+          </div>
+          {/* <button
+            onClick={handleSearchClick}
+            className="border border-gray-300 bg-gray-200 rounded-md p-2"
+          >
+            Search
+          </button> */}
+        </div>
 
         {/* User Avatar, Add Product Button and Dropdown */}
         <div className="flex items-center">

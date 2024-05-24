@@ -1,11 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import { useUserAuth } from "./context/AuthContext";
 import Products from "./components/Products";
+import { useSearch } from "./context/SearchContext";
 
 const HomePage = () => {
   const { user }: any = useUserAuth();
+
+  const { searchQuery, setSearchQuery, products, setProducts } = useSearch();
 
   const [chats, setChats] = useState([]);
 
@@ -31,20 +33,33 @@ const HomePage = () => {
           }
         } catch (error) {
           console.error("Error fetching chats:", error);
-        } finally {
         }
       }
     };
 
     fetchChats();
     console.log(user);
+
+    // Initial fetch for all products
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("/api/product");
+        const data = await response.json();
+        setProducts(data.products); // Set the initial product list
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
   }, [user]);
 
   if (user) {
     return (
       <>
         <div className="container mx-auto max-w-7xl flex items-center justify-between p-4"></div>
-        <Products />
+        <Products prod={products} />{" "}
+        {/* Pass the filtered products to the Products component */}
       </>
     );
   }

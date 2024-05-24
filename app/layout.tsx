@@ -7,6 +7,7 @@ import Navbar from "./components/Navbar"; // Adjust the import path based on you
 import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "./components/Providers";
 import store from "./redux/store/store";
+import { SearchProvider } from "./context/SearchContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,11 +25,13 @@ export default function RootLayout({
     <html lang="en">
       <AuthContextProvider>
         <Providers>
-          <body className={inter.className}>
-            <Navbar /> {/* Include the Navbar here */}
-            <Toaster />
-            {children}
-          </body>
+          <SearchProvider>
+            <body className={inter.className}>
+              <Navbar /> {/* Include the Navbar here */}
+              <Toaster />
+              {children}
+            </body>
+          </SearchProvider>
         </Providers>
       </AuthContextProvider>
     </html>

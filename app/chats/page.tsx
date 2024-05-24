@@ -1,90 +1,54 @@
-// import React, { useState, useEffect } from "react";
-// import { createChatRoom } from "../util/chatUtils";
-// // import { PrismaClient } from "@prisma/client"; // Import Prisma client
+"use client";
+import React, { useEffect, useState } from "react";
+import MyChatScreen from "../components/MyChatScreen";
+import { useUserAuth } from "../context/AuthContext";
 
-// // const prisma = new PrismaClient(); // Initialize Prisma client
-// import prisma from "../util/prismaClient";
+const MyChats = () => {
+  const [chats, setChats] = useState();
+  const [Loading, setLoading] = useState(true);
+  const { user }: any = useUserAuth();
+  const [products, setProducts] = useState([]);
 
-// const Chats = () => {
-//   const [message, setMessage] = useState("");
-//   const [messages, setMessages] = useState([]); // Array of messages
-//   const [productId, setProductId] = useState(null); // Product object or null
-//   const [sellerId, setSellerId] = useState("");
+  // useEffect(() => {
+  //   const fetchChats = async () => {
+  //     try {
+  //       const response = await fetch("/api/chats");
+  //       const data = await response.json();
+  //       setChats(data);
+  //     } catch (error) {
+  //       console.error("Failed to fetch chats:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchChats();
+  // }, []);
 
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         const data = await fetch("/api/product");
-//         const products = await data.json();
-//         console.log(products[0]);
-//         const product = products[0];
-//         const productId = product.id;
-//         const sellerId = product.ownerId;
+  useEffect(() => {
+    if (user) {
+      const fetchProducts = async () => {
+        try {
+          const response = await fetch(
+            `/api/product/myproduct/${user.identities[0].user_id}`,
+          );
+          const data = await response.json();
+          setProducts(data.products); // Assuming 'data.products' is the array
+        } catch (error) {
+          console.error("Failed to fetch products:", error);
+        }
+      };
 
-//         setProductId(productId);
-//         setSellerId(sellerId);
+      fetchProducts();
+    }
+  }, [user]);
 
-//         const roomId = `product_${productId}_seller_${sellerId}`;
+  const getOwnerId = () => {
+    if (products) {
+      return products[0].ownerId;
+    }
+  };
 
-//         const subscription = prisma.message
-//           .findMany({
-//             // Use Prisma client to fetch messages
-//             where: {
-//               room_id: roomId,
-//             },
-//             orderBy: {
-//               created_at: "asc",
-//             },
-//           })
-//           .$subscribe.message((payload: any) => {
-//             setMessages((prevMessages): any => [...prevMessages, payload]);
-//           });
+  return <MyChatScreen prop={getOwnerId} />;
+};
 
-//         return () => {
-//           subscription.unsubscribe();
-//         };
-//       } catch (error) {
-//         console.error("Failed to fetch products:", error);
-//       }
-//     };
-//     fetchData();
-//   }, []);
-
-//   // Handle message input changes
-//   const handleChange = (e: any) => {
-//     setMessage(e.target.value);
-//   };
-
-//   // Handle sending a message
-//   const handleSubmit = async (e: any) => {
-//     e.preventDefault();
-//     if (!message.trim()) return;
-
-//     // Insert message into your messages table
-//     // await createChatRoom();
-
-//     setMessage("");
-//   };
-
-//   return (
-//     <div>
-//       <h2>Chat with Seller</h2>
-//       <div>
-//         <h3>Product Card</h3>
-//         <p>Product ID: {productId}</p>
-//         <p>Seller ID: {sellerId}</p>
-//       </div>
-//       <div>
-//         {messages.map((msg: any, index) => (
-//           <p key={index}>{msg.content}</p>
-//         ))}
-//       </div>
-//       <form onSubmit={handleSubmit}>
-//         <input type="text" value={message} onChange={handleChange} />
-//         <button type="submit">Send</button>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default Chats;
+export default MyChats;

@@ -1,4 +1,4 @@
-import prisma from "../../util/prismaClient";
+import prisma from "../../../util/prismaClient";
 
 // const prisma = new PrismaClient();
 
@@ -11,8 +11,6 @@ export async function POST(req: Request) {
       },
       include: {
         user: true, // Include the user details for each chat
-        product: true, // Include the product details for each chat
-        messages: true, // Include the messages for each chat
       },
     });
     // return userChats;

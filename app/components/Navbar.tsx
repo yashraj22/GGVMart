@@ -125,8 +125,13 @@ const Navbar = () => {
           {user && (
             <>
               <Link href="/AddProduct">
-                <button className="ml-4 mr-10 border border-gray-800 text-gray-800 bg-white  rounded-full text-xl  font-bold py-1 px-8 ">
+                <button className="ml-4 mr-6 border border-gray-800 text-gray-800 bg-white  rounded-full text-xl  font-bold py-1 px-8 ">
                   SELL
+                </button>
+              </Link>
+              <Link href="/chats">
+                <button className=" mr-8 border border-white text-white bg-black  rounded-full text-xl  font-bold py-1 px-8 ">
+                  MyChats
                 </button>
               </Link>
               <DropdownMenu>

@@ -1,45 +1,71 @@
-// chat.js
-import React, { useEffect, useState } from "react";
+"use client";
+import { useEffect, useRef, useState } from "react";
+import ChatBubble from "@/app/components/ChatBubble";
 import { useUserAuth } from "@/app/context/AuthContext";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import SheetSide, { ProductSideSheet } from "@/app/components/ProductSideSheet";
 
-const ChatUi = () => {
-  const [messages, setMessages] = useState<any>([]);
-  const [inputValue, setInputValue] = useState("");
+export default function Page({ params }: { params: { slug: string } }) {
+  const [newMessage, setNewMessage] = useState("");
   const { user }: any = useUserAuth();
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const ownerId = params.slug[1];
 
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await fetch("/api/messages");
-        if (!res.ok) {
-          throw new Error(res.statusText);
+        if (user) {
+          const response = await fetch("/api/msg", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ chatId: params.slug[0] }),
+          });
+          const data = await response.json();
+          if (response.ok) {
+            setMessages(data.messages);
+          } else {
+            console.error("Failed to fetch messages:", data.error);
+          }
         }
-        const data = await res.json();
-        const messages = data.messages.map(
-          (message: { text: any }) => message.text,
-        );
-        setMessages(messages);
       } catch (error) {
         console.error("Error fetching messages:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchMessages();
-  }, []);
+  }, [user]);
+
+  useEffect(() => {
+    // Automatically scroll to the last message
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   const handleSendMessage = async (e: any) => {
     e.preventDefault();
+    if (newMessage.trim() === "") return; // Skip empty messages
+
     try {
       const res = await fetch("/api/messages/send/", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", // Specify JSON content type
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          text: inputValue,
-          chatId: "a8326c4b-b607-4b26-b20d-96c1dea638a2",
-          senderId: user.id,
-          receiverId: 456 as any,
+          text: newMessage,
+          chatId: params.slug[0],
+          senderId: user?.id,
+          receiverId: ownerId,
         }),
       });
 
@@ -48,56 +74,80 @@ const ChatUi = () => {
       }
 
       const message = await res.json();
-      console.log("Message created:", message);
-
-      // Assuming the response from the server is an object with 'text' property
-      setMessages([message.text, ...messages]);
-      console.log("Messages:", messages);
-      setInputValue("");
+      setMessages((prevMessages) => [...prevMessages, message]);
+      setNewMessage("");
     } catch (error) {
       console.error("Error sending message:", error);
     }
   };
 
   const handleKeyDown = (e: any) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
       handleSendMessage(e);
     }
   };
 
   return (
-    <div>
-      <h1 className="mt-5">Message</h1>
-      <div className=" items-center chat-container px-4 py-11 border-neutral-50 border-2 flex flex-col w-96 mt-2 ">
-        {messages && messages.length > 0 && (
-          <div className="chat-messages border-2 border-neutral-200">
-            {messages
-              .map((message: any, index: any) => (
-                <div key={message + index} className="chat-message text-white">
-                  {message}
-                </div>
-              ))
-              .reverse()}
+    <div
+      className="flex flex-col h-screen min-w-full items-center"
+      style={{ height: "calc(100vh - 84px)" }}
+    >
+      {/* Outermost parent container with fixed height */}
+      <div className="flex flex-col h-screen min-w-full rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-800 overflow-y-auto scroll-m-0">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+          <div className="flex items-center space-x-4">
+            <Avatar className="w-10 h-10">
+              <AvatarImage alt="User" src={user?.user_metadata?.picture} />
+              <AvatarFallback>JD</AvatarFallback>
+            </Avatar>
+            <div className="grid gap-1.5">
+              <h2 className="text-lg font-bold">Alice</h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Selling: Retro Bluetooth Speaker
+              </p>
+            </div>
           </div>
-        )}
-        <div className="chat-input mt-4">
-          <form onSubmit={handleSendMessage}>
-            <input
-              type="text"
-              className="text-black text-"
-              placeholder="Type your message"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
-            <button type="submit" className="ml-5">
-              Send
-            </button>
-          </form>
+          {/* <Button size="sm" variant="outline">
+            Products
+          </Button> */}
+          <ProductSideSheet />
+        </div>
+        {/* Scrollable chat messages container */}
+        <div
+          className="flex-1 p-4 gap-4 overflow-y-auto relative"
+          ref={scrollRef}
+        >
+          {messages.map((message: any) => {
+            const isSender = message.senderId === user.id;
+            return (
+              <ChatBubble
+                key={message.id}
+                isSender={isSender}
+                avatarSrc={isSender ? user?.user_metadata?.picture : undefined}
+                avatarAlt="User"
+                initials="JD"
+                message={message.text}
+                time={new Date().toLocaleString()}
+              />
+            );
+          })}
+        </div>
+        {/* Footer */}
+        <div className="flex items-center p-4 border-t border-gray-200 dark:border-gray-800">
+          <Textarea
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            className="max-h-[100px] w-full min-h-[40px] resize-none"
+            placeholder="Type a message..."
+            onKeyDown={handleKeyDown}
+          />
+          <Button className="ml-4" onClick={(e) => handleSendMessage(e)}>
+            Send
+          </Button>
         </div>
       </div>
     </div>
   );
-};
-
-export default ChatUi;
+}

@@ -1,10 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { useUserAuth } from "../../context/AuthContext";
 
 export const fetchData = createAsyncThunk("data/fetchData", async () => {
+  const { user }: any = useUserAuth();
   //TODO: CHANGE API ENDPOINTS
-  const response = await fetch("/api/data/");
+  const response = await fetch(
+    `/api/product/myproduct/${user.identities[0].user_id}`,
+  );
   const data = await response.json();
-  return data;
+  return data.products;
 });
 
 const dataSlice = createSlice({

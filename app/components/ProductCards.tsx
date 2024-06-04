@@ -1,20 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { LuSettings2 } from "react-icons/lu";
 import ChatWithSeller from "./ChatWithSeller";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
 import Image from "next/image";
-import { useUserAuth } from "../context/AuthContext";
 import {
   Carousel,
   CarouselContent,
@@ -22,61 +10,27 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { toast } from "@/components/ui/use-toast";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store/rootReducer";
 
 const ProductCards = () => {
   const [products, setProducts] = useState([]);
-  const { user }: any = useUserAuth();
-
-  const handleDelete = async (productId) => {
-    try {
-      const response = await fetch(`/api/product/delete`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: productId }), // Send the product ID in the body
-      });
-      if (response.ok) {
-        // Successfully deleted the product, update state to remove the product card
-        toast({
-          title: "Product Deleted",
-          description: "Your product has been successfully Deleted.",
-          className: "bg-green-500",
-        });
-
-        setProducts(products.filter((product) => product.id !== productId));
-      } else {
-        // Handle cases where the server responds with an error
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to delete the product");
-      }
-    } catch (error) {
-      console.error("Error deleting product:", error);
-    }
-  };
-
+  const productdata = useSelector((state: RootState) => state.data.data);
   useEffect(() => {
-    if (user) {
-      const fetchProducts = async () => {
-        try {
-          const response = await fetch(
-            `/api/product/myproduct/${user.identities[0].user_id}`,
-          );
-          const data = await response.json();
-          setProducts(data.products); // Assuming 'data.products' is the array
-        } catch (error) {
-          console.error("Failed to fetch products:", error);
-        }
-      };
-
-      fetchProducts();
+    if (productdata) {
+      setProducts(productdata);
     }
-  }, [user]);
-
+  }, [productdata]);
+  const handleClick = (id: string) => {
+    //TO-DO: Implement fetching chat data based on productId
+  };
   const renderProductCards = () => {
     return products.map((product) => (
-      <div key={product.id} className="p-4 flex flex-col">
+      <div
+        key={product.id}
+        className="p-4 flex flex-col"
+        onClick={() => handleClick(product.id)}
+      >
         <Card className=" w-64 bg-white shadow-lg rounded-lg overflow-hidden h-full flex flex-col">
           <div className="relative">
             <Carousel className="w-full">
@@ -103,29 +57,6 @@ const ProductCards = () => {
                 <h1 className="text-xl font-bold text-gray-900 mb-2">
                   {product.title}
                 </h1>
-                {/* {user && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button>
-                        <LuSettings2 />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-48">
-                      <DropdownMenuItem
-                        onClick={() =>
-                          alert("Edit functionality not implemented")
-                        }
-                      >
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleDelete(product.id)}
-                      >
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )} */}
               </div>
               <div className="flex justify-start items-center mb-4 space-x-2">
                 <span className="text-xs text-gray-500">Category:</span>

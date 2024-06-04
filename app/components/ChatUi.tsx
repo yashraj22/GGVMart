@@ -7,7 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import SheetSide, { ProductSideSheet } from "@/app/components/ProductSideSheet";
 
-export default function Page({ params }: { params: { slug: string } }) {
+export default function ChatUi({
+  params,
+}: {
+  params: { slug: Array<string> };
+}) {
   const [newMessage, setNewMessage] = useState("");
   const { user }: any = useUserAuth();
   const [messages, setMessages] = useState([]);
@@ -25,7 +29,10 @@ export default function Page({ params }: { params: { slug: string } }) {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ chatId: params.slug[0] }),
+            body: JSON.stringify({
+              chatId: params.slug[0],
+              senderId: params.slug[2],
+            }),
           });
           const data = await response.json();
           if (response.ok) {
@@ -42,7 +49,7 @@ export default function Page({ params }: { params: { slug: string } }) {
     };
 
     fetchMessages();
-  }, [user]);
+  }, [user, params.slug]);
 
   useEffect(() => {
     // Automatically scroll to the last message
@@ -109,9 +116,6 @@ export default function Page({ params }: { params: { slug: string } }) {
               </p>
             </div>
           </div>
-          {/* <Button size="sm" variant="outline">
-            Products
-          </Button> */}
           <ProductSideSheet />
         </div>
         {/* Scrollable chat messages container */}

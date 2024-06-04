@@ -1,24 +1,24 @@
 import prisma from "../../util/prismaClient";
-
-// const prisma = new PrismaClient();
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const { productId } = await req.json();
+  const { productdata } = await req.json();
   try {
-    const userChats = await prisma.chat.findMany({
-      where: {
-        productId: productId,
-      },
-      include: {
-        user: true, // Include the user details for each chat
-        product: true, // Include the product details for each chat
-        messages: true, // Include the messages for each chat
-      },
-    });
-    // return userChats;
-    return Response.json({ userChats });
+    for (const product of productdata) {
+      const userChats = await prisma.chat.findMany({
+        where: {
+          productId: product.id,
+        },
+      });
+      if (userChats.length > 0) {
+        console.log("userchats");
+        console.log(userChats);
+        return NextResponse.json({ userChats });
+      }
+    }
+    return NextResponse.json({ message: "No chats found for this product." });
   } catch (error) {
     console.error("Error fetching chats:", error);
-    return Response.json({ error });
+    return NextResponse.json({ error });
   }
 }

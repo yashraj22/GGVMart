@@ -9,7 +9,6 @@ import {
 } from "react";
 import { SupabaseClient } from "@supabase/supabase-js";
 import supabase from "../util/supabaseClient";
-import { navigate } from "../util/actions";
 
 export interface User {
   // Define your user type here if available

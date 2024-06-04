@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useSearch } from "../context/SearchContext";
+import { navigate } from "../util/actions";
 
 const Navbar = () => {
   const { user, loginWithGoogle, logOut }: any = useUserAuth();
@@ -62,6 +63,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await logOut();
+      navigate("/");
     } catch (error) {
       console.log(error);
     }

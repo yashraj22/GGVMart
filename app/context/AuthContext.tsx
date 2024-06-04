@@ -7,10 +7,9 @@ import {
   useMemo,
   ReactNode,
 } from "react";
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
-
-const SUPABASE_KEY: string | undefined = process.env.NEXT_PUBLIC_SUPABASE_KEY;
-const SUPABASE_URL: string | undefined = process.env.NEXT_PUBLIC_SUPABASE_URL;
+import { SupabaseClient } from "@supabase/supabase-js";
+import supabase from "../util/supabaseClient";
+import { navigate } from "../util/actions";
 
 export interface User {
   // Define your user type here if available
@@ -28,12 +27,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-if (!SUPABASE_KEY || !SUPABASE_URL) {
-  throw new Error("Supabase key or URL not provided");
-}
-
-const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
-
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
@@ -49,6 +42,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   const logOut = async () => {
     const { error } = await supabase.auth.signOut();
+
     if (error) {
       console.log(error);
     } else {

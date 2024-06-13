@@ -1,5 +1,11 @@
 import { combineReducers } from "redux";
-import dataReducer from "./dataSlice";
+import productReducer from "./dataSlice";
+import chatReducer from "./chatSlice";
+
+const dataReducer = combineReducers({
+  chat: chatReducer,
+  product: productReducer,
+});
 
 const rootReducer = combineReducers({
   data: dataReducer,

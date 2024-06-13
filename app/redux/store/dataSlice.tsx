@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-interface FetchDataArgs {
+export interface FetchDataArgs {
   userId: string;
 }
 export const fetchData = createAsyncThunk<
@@ -14,7 +14,7 @@ export const fetchData = createAsyncThunk<
 });
 
 const dataSlice = createSlice({
-  name: "data",
+  name: "product",
   initialState: {
     data: null,
     status: "idle",

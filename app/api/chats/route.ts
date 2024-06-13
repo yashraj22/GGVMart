@@ -11,8 +11,6 @@ export async function POST(req: Request) {
         },
       });
       if (userChats.length > 0) {
-        console.log("userchats");
-        console.log(userChats);
         return NextResponse.json({ userChats });
       }
     }

@@ -12,10 +12,17 @@ import {
 } from "@/components/ui/carousel";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store/rootReducer";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../redux/store/store";
+import { fetchChatData } from "../redux/store/chatSlice";
 
 const ProductCards = () => {
   const [products, setProducts] = useState([]);
-  const productdata = useSelector((state: RootState) => state.data.data);
+  const productdata = useSelector(
+    (state: RootState) => state.data.product.data,
+  );
+  const dispatch = useDispatch<AppDispatch>();
+
   useEffect(() => {
     if (productdata) {
       setProducts(productdata);
@@ -23,6 +30,7 @@ const ProductCards = () => {
   }, [productdata]);
   const handleClick = (id: string) => {
     //TO-DO: Implement fetching chat data based on productId
+    dispatch(fetchChatData({ productId: id }));
   };
   const renderProductCards = () => {
     return products.map((product) => (

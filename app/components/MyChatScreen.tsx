@@ -7,7 +7,10 @@ import { useEffect, useState } from "react";
 import supabase from "../util/supabaseClient";
 
 const MyChatScreen = () => {
-  const productdata = useSelector((state: RootState) => state.data.data);
+  const productdata = useSelector(
+    (state: RootState) => state.data.product.data,
+  );
+  const chatdata = useSelector((state: RootState) => state.data.chat.data);
   const [chatsData, setchatsData] = useState<any[]>();
   const [userId, setuserId] = useState<string | undefined>();
   const [chatId, setchatId] = useState<string | undefined>();
@@ -50,7 +53,7 @@ const MyChatScreen = () => {
         }
     };
     fetchchatData();
-  }, [productdata, chatsData]);
+  }, [productdata]);
 
   // Effect to get user ID from Supabase
   useEffect(() => {
@@ -61,6 +64,12 @@ const MyChatScreen = () => {
     };
     getIdFetch();
   }, []);
+
+  useEffect(() => {
+    if (chatdata) {
+      setchatsData(chatdata);
+    }
+  }, [chatdata]);
 
   const handleUserCardClick = (
     selectedChatId: string,
@@ -75,14 +84,16 @@ const MyChatScreen = () => {
       <div className="flex flex-col items-center w-1/3">
         {chatsData &&
           chatsData.map((chat) => {
-            return (
-              <UserCard
-                key={chat.id}
-                prop={chat.userId}
-                chatId={chat.id}
-                onUserCardClick={handleUserCardClick}
-              />
-            );
+            if (chat.userId !== userId) {
+              return (
+                <UserCard
+                  key={chat.id}
+                  userId={chat.userId}
+                  chatId={chat.id}
+                  onUserCardClick={handleUserCardClick}
+                />
+              );
+            }
           })}
       </div>
       <div className="flex w-2/3">

@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -98,4 +99,10 @@ const ProductDetails = () => {
   );
 };
 
-export default ProductDetails;
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProductDetails />
+    </Suspense>
+  );
+}

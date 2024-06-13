@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-
+import { Suspense } from "react";
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
@@ -117,4 +117,10 @@ const ProductDetails = () => {
   );
 };
 
-export default ProductDetails;
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProductDetails />
+    </Suspense>
+  );
+}

@@ -1,8 +1,8 @@
-// pages/api/product/[id].js
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../util/prismaClient";
 
-export default async function POST(
-  req: Request,
+export async function POST(
+  request: NextRequest,
   { params }: { params: { userId: string } },
 ) {
   const id: string = params.userId;
@@ -12,12 +12,12 @@ export default async function POST(
   });
 
   if (!product) {
-    return new Response(JSON.stringify({ error: "Product not found" }), {
+    return new NextResponse(JSON.stringify({ error: "Product not found" }), {
       status: 404,
     });
   }
 
   const ownerId = product.ownerId;
 
-  return new Response(JSON.stringify({ ownerId: ownerId }));
+  return new NextResponse(JSON.stringify({ ownerId: ownerId }));
 }

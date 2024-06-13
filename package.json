@@ -13,7 +13,8 @@
     "prepare": "husky",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx,json,md,css}\"",
     "format:write": "prettier --write \"**/*.{ts,tsx,mdx,json,md,css}\"",
-    "lint:fix": "next lint --fix"
+    "lint:fix": "next lint --fix",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@next/env": "^14.2.3",

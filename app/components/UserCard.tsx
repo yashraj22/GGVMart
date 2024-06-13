@@ -1,13 +1,20 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-const UserCard = ({ prop, chatId, onUserCardClick }: any) => {
+const UserCard = ({ userId, chatId, onUserCardClick }: any) => {
   const [userData, setuserData] = useState<any>();
 
   useEffect(() => {
     const fetchUserDetail = async () => {
       try {
-        const response = await fetch(`/api/user/${prop}`);
+        const response = await fetch("/api/user/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId }),
+        });
+
         const data = await response.json();
         setuserData(data);
         console.log("userdata");
@@ -17,13 +24,13 @@ const UserCard = ({ prop, chatId, onUserCardClick }: any) => {
       }
     };
 
-    if (prop) {
+    if (userId) {
       fetchUserDetail();
     }
-  }, [prop]);
+  }, [userId]);
 
   const handleClick = () => {
-    onUserCardClick(chatId, prop);
+    onUserCardClick(chatId, userId);
   };
 
   return (

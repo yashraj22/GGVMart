@@ -31,7 +31,8 @@ export default function ChatUi({
             },
             body: JSON.stringify({
               chatId: params.slug[0],
-              senderId: params.slug[2],
+              ...(params.slug[2] && { senderId: params.slug[2] }),
+              ...(params.slug[1] && { receiverId: params.slug[1] }),
             }),
           });
           const data = await response.json();

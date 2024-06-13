@@ -1,13 +1,21 @@
 import prisma from "../../util/prismaClient";
 
 export async function POST(req: Request) {
-  const { chatId, senderId }: any = await req.json();
+  const { chatId, senderId, recieverId }: any = await req.json();
   try {
     // Fetch messages for the specified chatId
     const messages = await prisma.message.findMany({
       where: {
-        chatId: chatId,
-        senderId: senderId,
+        OR: [
+          {
+            chatId: chatId,
+            ...(senderId && { senderId: senderId }),
+          },
+          {
+            chatId: chatId,
+            ...(recieverId && { recieverId: recieverId }),
+          },
+        ],
       },
       // Include any additional fields or relations if needed
     });

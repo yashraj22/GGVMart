@@ -1,10 +1,22 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useUserAuth } from "@/app/context/AuthContext";
 import { navigate } from "../util/actions";
+import supabase from "../util/supabaseClient";
 
 const ChatWithSeller = ({ productId, receiverId }: any) => {
-  const { user }: any = useUserAuth();
+  const [userId, setuserId] = useState();
+
+  useEffect(() => {
+    const getIdFetch = async () => {
+      const { data } = await supabase.auth.getSession();
+      const id: any = data.session?.user.id;
+      if (id) {
+        setuserId(id);
+      }
+    };
+    getIdFetch();
+  });
 
   const handleChatWithSeller = async () => {
     console.log("====================================");
@@ -18,7 +30,7 @@ const ChatWithSeller = ({ productId, receiverId }: any) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: user.id, // Replace with the actual user ID
+          userId: userId, // Replace with the actual user ID
           productId: productId, // Replacep with the actual product ID
         }),
       });
@@ -40,8 +52,15 @@ const ChatWithSeller = ({ productId, receiverId }: any) => {
   return (
     <div>
       <button
-        className="border text-white font-bold border-gray-300 rounded-sm px-4 py-1 bg-gray-800 hover:bg-gray-700"
+        className={
+          `border text-white font-bold border-gray-300 rounded-sm px-4 py-1` +
+          (userId === receiverId
+            ? " cursor-not-allowed  bg-gray-400 "
+            : " bg-gray-800  hover:bg-gray-700")
+        }
         onClick={handleChatWithSeller}
+        disabled={userId === receiverId}
+        aria-disabled={userId === receiverId}
       >
         Chat
       </button>

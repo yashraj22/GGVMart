@@ -15,10 +15,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useSearch } from "../context/SearchContext";
-import { navigate } from "../util/actions";
+import { purgeStore } from "../util/actions";
+import { navigate } from "../util/redirect";
+import { useDispatch } from "react-redux";
 
 const Navbar = () => {
   const { user, loginWithGoogle, logOut }: any = useUserAuth();
+  const dispatch = useDispatch();
 
   const { searchQuery, setSearchQuery, resetSearch, setProducts }: any =
     useSearch();
@@ -64,6 +67,7 @@ const Navbar = () => {
     try {
       await logOut();
       navigate("/");
+      dispatch(purgeStore());
     } catch (error) {
       console.log(error);
     }

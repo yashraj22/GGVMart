@@ -1,6 +1,9 @@
-"use server";
-import { redirect } from "next/navigation";
+import { PURGE } from "redux-persist";
 
-export async function navigate(data: string) {
-  redirect(`${data}`);
-}
+export const purgeStore = () => {
+  return {
+    type: PURGE,
+    key: "root", // This should match the key you used in persistConfig
+    result: () => null,
+  };
+};

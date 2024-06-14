@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useUserAuth } from "@/app/context/AuthContext";
-import { navigate } from "../util/actions";
+import { navigate } from "../util/redirect";
 import supabase from "../util/supabaseClient";
 
 const ChatWithSeller = ({ productId, receiverId }: any) => {

@@ -33,6 +33,14 @@ const ProductCards = () => {
     dispatch(fetchChatData({ productId: id }));
   };
   const renderProductCards = () => {
+    if (products.length === 0) {
+      return (
+        <div className="mt-10">
+          {" "}
+          <h2>User have no Products</h2>{" "}
+        </div>
+      );
+    }
     return products.map((product) => (
       <div
         key={product.id}

@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { RiSearch2Line } from "react-icons/ri";
+import { RiMessage2Line } from "react-icons/ri";
 
 import { useUserAuth } from "../context/AuthContext";
 import {
@@ -79,8 +80,9 @@ const Navbar = () => {
         {/* Logo Section */}
         <div className="flex items-center">
           <Link href="/" onClick={resetSearch}>
-            <span className="text-lg font-semibold mr-10 text-gray-800">
-              GGVMart
+            <span className="mr-5 sm:text-lg font-semibold mr-10 text-gray-800">
+              <span className="hidden sm:inline">GGVMart</span>
+              <span className="sm:hidden">G</span>
             </span>
           </Link>
         </div>
@@ -105,7 +107,7 @@ const Navbar = () => {
         </ul> */}
 
         {/* Search Section */}
-        <div className="flex items-center border rounded-full px-5 flex-grow">
+        <div className="flex items-center border rounded-full px-5 mr-5 flex-grow">
           <div className="flex justify-center items-center flex-grow">
             <RiSearch2Line className="text-xl" />
             <input
@@ -131,15 +133,20 @@ const Navbar = () => {
           {user && (
             <>
               <Link href="/AddProduct">
-                <button className="ml-4 mr-6 border border-gray-800 text-gray-800 bg-white  rounded-full text-xl  font-bold py-1 px-8 ">
-                  SELL
+                <button className="h-10 w-10 sm:h-10  sm:w-auto  sm:px-8  ml-0 sm:ml-4 mr-2  border border-gray-800 text-gray-800 bg-white rounded-full sm:rounded-full text-xl font-bold">
+                  <span className="hidden sm:inline">SELL</span>
+                  <span className="sm:hidden">+</span>
                 </button>
               </Link>
               <Link href="/chats">
-                <button className=" mr-8 border border-white text-white bg-black  rounded-full text-xl  font-bold py-1 px-8 ">
+                <button className="h-10 w-10 sm:w-auto sm:px-8 ml-0 sm:ml-4 mr-2 border border-gray-800 text-gray-800 bg-white rounded-full text-xl font-bold py-1 px-8 hidden sm:inline">
                   MyChats
                 </button>
+                <button className="mr-2 border border-white text-white bg-black rounded-full sm:rounded-lg text-xl font-bold w-10 h-10 flex items-center justify-center sm:hidden">
+                  <RiMessage2Line className="text-xl" />
+                </button>
               </Link>
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Image

@@ -69,11 +69,13 @@ const Products = ({ prod }) => {
         </h1>
       );
     }
-    return products.map((product) => (
+    return products.map((product, index) => (
       <Link key={product.id} href={`/ProductDetails?id=${product.id}`}>
-        <div className="p-4">
-          <Card className="max-w-sm bg-[#fafafa] shadow-sm rounded-sm overflow-hidden h-full flex flex-col">
-            <div className="relative">
+        <div
+          className={`p-2 flex justify-center items-center sm:justify-start`}
+        >
+          <Card className="w-full  sm:max-w-sm bg-[#fafafa] shadow-sm rounded-sm overflow-hidden h-full flex flex-col sm:flex-col">
+            <div className="relative w-full">
               <Carousel className="w-full">
                 <CarouselContent>
                   {product.images.map((image, index) => (
@@ -125,7 +127,7 @@ const Products = ({ prod }) => {
   };
 
   return (
-    <div className="container mx-auto max-w-7xl p-0 mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="container mx-auto max-w-7xl p-4 sm:p-0 mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {loading ? renderSkeletons() : renderProductCards()}
     </div>
   );

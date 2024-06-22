@@ -72,9 +72,7 @@ const Products = ({ prod }) => {
     return products.map((product, index) => (
       <Link key={product.id} href={`/ProductDetails?id=${product.id}`}>
         <div
-          className={`p-2 ${
-            index % 2 === 0 ? "bg-red-500" : "bg-blue-500"
-          } flex justify-center items-center sm:justify-start`}
+          className={`p-2 flex justify-center items-center sm:justify-start`}
         >
           <Card className="w-full  sm:max-w-sm bg-[#fafafa] shadow-sm rounded-sm overflow-hidden h-full flex flex-col sm:flex-col">
             <div className="relative w-full">

@@ -87,11 +87,7 @@ const Products = ({ prod }) => {
 
   const renderProductCards = () => {
     if (products.length === 0) {
-      return (
-        <h1 className="text-2xl font-semibold text-gray-800 text-center mt-10">
-          No products found
-        </h1>
-      );
+      return renderSkeletons();
     }
     return products.map((product, index) => (
       <div

@@ -99,7 +99,7 @@ const ProductDetails = () => {
         <div className="mt-1">
           <div className="flex items-center">
             <Rater
-              style={{ fontSize: "20px" }}
+              // style={{ fontSize: "20px" }}
               total={5}
               interactive={false}
               rating={3.5}

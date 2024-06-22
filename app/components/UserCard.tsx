@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-const UserCard = ({ userId, chatId, onUserCardClick }: any) => {
+const UserCard = ({ userId, chatId, onUserCardClick, avatarOnly }: any) => {
   const [userData, setuserData] = useState<any>();
 
   useEffect(() => {
@@ -35,21 +35,25 @@ const UserCard = ({ userId, chatId, onUserCardClick }: any) => {
 
   return (
     <div
-      className="flex h-20 w-full bg-slate-100 border border-gray-300 border-y-1 border-x-0"
+      className={`flex ${avatarOnly ? "h-16 w-16" : "h-20 w-full"} bg-slate-100 border border-gray-300`}
       onClick={handleClick}
     >
-      <div className="flex h-20 ml-4 items-center ">
+      <div
+        className={`flex items-center ${avatarOnly ? "justify-center w-full" : "ml-4"}`}
+      >
         <Image
           src={userData && userData.user.raw_user_meta_data.picture}
           alt="User Avatar"
-          width={50}
-          height={50}
+          width={avatarOnly ? 40 : 50}
+          height={avatarOnly ? 40 : 50}
           className="rounded-full cursor-pointer"
         />
       </div>
-      <div className="flex mt-5 ml-4">
-        <h1>{userData && userData.user.raw_user_meta_data.name}</h1>
-      </div>
+      {!avatarOnly && (
+        <div className="flex flex-col justify-center ml-4">
+          <h1>{userData && userData.user.raw_user_meta_data.name}</h1>
+        </div>
+      )}
     </div>
   );
 };

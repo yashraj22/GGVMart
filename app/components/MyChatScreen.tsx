@@ -16,15 +16,6 @@ const MyChatScreen = () => {
   const [chatId, setchatId] = useState<string | undefined>();
   const [senderId, setsenderId] = useState<string | undefined>();
 
-  // Effect to set productId based on data from Redux store
-  // useEffect(() => {
-  //   if (productdata.data[0]?.id) {
-  //     setproductId(productdata.data[0].id);
-  //   } else {
-  //     navigate("/");
-  //   }
-  // }, [productdata]);
-
   // Effect to fetch chat data based on productId
   useEffect(() => {
     const fetchchatData = async () => {
@@ -80,8 +71,8 @@ const MyChatScreen = () => {
   };
 
   return (
-    <div className="flex h-4/5 w-screen">
-      <div className="flex flex-col items-center w-1/3">
+    <div className="flex h-full mx-auto max-w-7xl w-screen">
+      <div className="hidden md:flex flex-col items-center w-1/3">
         {chatsData &&
           chatsData.map((chat) => (
             <UserCard
@@ -93,7 +84,20 @@ const MyChatScreen = () => {
             />
           ))}
       </div>
-      <div className="flex w-2/3">
+      <div className="flex flex-col items-center w-16 md:hidden">
+        {chatsData &&
+          chatsData.map((chat) => (
+            <UserCard
+              key={chat.id}
+              userId={chat.userId}
+              chatId={chat.id}
+              isCurrentUser={chat.userId === userId}
+              onUserCardClick={handleUserCardClick}
+              avatarOnly
+            />
+          ))}
+      </div>
+      <div className="flex w-full md:w-2/3">
         <ChatUi params={{ slug: [chatId, userId, senderId] }} />
       </div>
     </div>

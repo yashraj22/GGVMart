@@ -88,9 +88,9 @@ export default function Page({ params }: { params: { slug: string } }) {
   };
 
   return (
-    <div className="flex flex-col items-center mt-10">
+    <div className="flex flex-col items-center h-[calc(100vh-5rem)]">
       {/* Outermost parent container with fixed height */}
-      <div className="flex flex-col h-[600px] w-full max-w-2xl rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-800 overflow-y-auto scroll-m-0">
+      <div className="flex flex-col w-full h-full max-w-2xl rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-800 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
           <div className="flex items-center space-x-4">
@@ -105,12 +105,9 @@ export default function Page({ params }: { params: { slug: string } }) {
               </p>
             </div>
           </div>
-          <Button size="sm" variant="outline">
-            Contact support
-          </Button>
         </div>
         {/* Scrollable chat messages container */}
-        <div className="flex-1 p-4 gap-4 overflow-y-scroll relative" ref={scrollRef}>
+        <div className="flex-1 p-4 gap-4 overflow-y-auto" ref={scrollRef}>
           {messages.map((message: any) => {
             const isSender = message.senderId === user.id;
             return (

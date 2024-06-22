@@ -4,21 +4,27 @@ import { useUserAuth } from "@/app/context/AuthContext";
 import { navigate } from "../util/redirect";
 import supabase from "../util/supabaseClient";
 
-const ChatWithSeller = ({ productId, receiverId }: any) => {
-  const [userId, setuserId] = useState();
+const ChatWithSeller = ({ productId, receiverId, onAuthRequired }: any) => {
+  const [userId, setUserId] = useState();
+  const { user }: any = useUserAuth();
 
   useEffect(() => {
     const getIdFetch = async () => {
       const { data } = await supabase.auth.getSession();
       const id: any = data.session?.user.id;
       if (id) {
-        setuserId(id);
+        setUserId(id);
       }
     };
     getIdFetch();
-  });
+  }, []);
 
   const handleChatWithSeller = async () => {
+    if (!user) {
+      onAuthRequired();
+      return;
+    }
+
     console.log("====================================");
     console.log("hello");
     console.log("====================================");
@@ -30,8 +36,8 @@ const ChatWithSeller = ({ productId, receiverId }: any) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: userId, // Replace with the actual user ID
-          productId: productId, // Replacep with the actual product ID
+          userId: userId,
+          productId: productId,
         }),
       });
 
@@ -43,11 +49,16 @@ const ChatWithSeller = ({ productId, receiverId }: any) => {
         console.log(data?.chat as any);
         console.log("====================================");
       } else {
+        // Handle error
       }
     } catch (error) {
       console.error("Error calling API:", error);
     }
   };
+
+  if (userId === receiverId) {
+    return null;
+  }
 
   return (
     <div>
@@ -55,7 +66,7 @@ const ChatWithSeller = ({ productId, receiverId }: any) => {
         className={
           `border text-white font-bold border-gray-300 rounded-sm px-4 py-1` +
           (userId === receiverId
-            ? " cursor-not-allowed  bg-gray-400 "
+            ? " cursor-not-allowed  bg-transparent "
             : " bg-gray-800  hover:bg-gray-700")
         }
         onClick={handleChatWithSeller}

@@ -83,18 +83,15 @@ const MyChatScreen = () => {
     <div className="flex h-4/5 w-screen">
       <div className="flex flex-col items-center w-1/3">
         {chatsData &&
-          chatsData.map((chat) => {
-            if (chat.userId !== userId) {
-              return (
-                <UserCard
-                  key={chat.id}
-                  userId={chat.userId}
-                  chatId={chat.id}
-                  onUserCardClick={handleUserCardClick}
-                />
-              );
-            }
-          })}
+          chatsData.map((chat) => (
+            <UserCard
+              key={chat.id}
+              userId={chat.userId}
+              chatId={chat.id}
+              isCurrentUser={chat.userId === userId}
+              onUserCardClick={handleUserCardClick}
+            />
+          ))}
       </div>
       <div className="flex w-2/3">
         <ChatUi params={{ slug: [chatId, userId, senderId] }} />

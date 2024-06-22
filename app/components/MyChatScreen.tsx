@@ -71,7 +71,7 @@ const MyChatScreen = () => {
   };
 
   return (
-    <div className="flex h-full mx-auto max-w-7xl w-screen">
+    <div className="flex h-[calc(100vh-5rem)] mx-auto max-w-7xl w-screen">
       <div className="hidden md:flex flex-col items-center w-1/3">
         {chatsData &&
           chatsData.map((chat) => (

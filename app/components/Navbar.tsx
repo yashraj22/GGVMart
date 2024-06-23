@@ -104,7 +104,14 @@ const Navbar = () => {
 
         {/* User Avatar, Add Product Button and Dropdown */}
         <div className="flex items-center space-x-2 mr-8 sm:space-x-4">
-          {!user && <button onClick={loginWithGoogle}>Sign In</button>}
+          {!user && (
+            <button
+              className="border rounded-full px-5 py-1 text-black hover:bg-gray-800 hover:text-white"
+              onClick={loginWithGoogle}
+            >
+              Sign In
+            </button>
+          )}
           {user && (
             <>
               <Link href="/AddProduct">
@@ -135,10 +142,10 @@ const Navbar = () => {
                 <DropdownMenuContent className="w-48">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <Link href="/Profile">Profile</Link>
+                  <DropdownMenuItem onSelect={() => navigate("/Profile")}>
+                    Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem>Settings</DropdownMenuItem>
+
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     Log out

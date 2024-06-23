@@ -4,6 +4,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import ChatWithSeller from "./ChatWithSeller";
 import { useRouter } from "next/navigation";
+
+import { useUserAuth } from "@/app/context/AuthContext";
+import { useDispatch } from "react-redux";
+import { purgeStore } from "../util/actions";
+import { navigate } from "../util/redirect";
+
 import {
   Carousel,
   CarouselContent,
@@ -13,7 +19,6 @@ import {
 } from "@/components/ui/carousel";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-import { useUserAuth } from "@/app/context/AuthContext";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,6 +36,17 @@ const Products = ({ prod }) => {
   const [showAuthAlert, setShowAuthAlert] = useState(false);
   const router = useRouter();
   const { user }: any = useUserAuth();
+  const { loginWithGoogle } = useUserAuth();
+  const dispatch = useDispatch();
+
+  const handleSignIn = async () => {
+    try {
+      await loginWithGoogle();
+      setShowAuthAlert(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     if (prod) {
@@ -55,17 +71,6 @@ const Products = ({ prod }) => {
 
   const handleAuthRequired = () => {
     setShowAuthAlert(true);
-  };
-
-  const handleCardClick = (productId) => {
-    router.push(`/ProductDetails/${productId}`);
-  };
-
-  const handleChatClick = (productId, receiverId) => {
-    if (!user) {
-      setShowAuthAlert(true);
-    }
-    // If user is authenticated, ChatWithSeller component will handle the chat logic
   };
 
   const renderSkeletons = () => {
@@ -149,7 +154,7 @@ const Products = ({ prod }) => {
 
   return (
     <>
-      <div className="container mx-auto max-w-7xl p-4 sm:p-0 mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="container mx-auto max-w-7xl p-4 sm:p-0 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {loading ? renderSkeletons() : renderProductCards()}
       </div>
       <AlertDialog open={showAuthAlert} onOpenChange={setShowAuthAlert}>
@@ -162,7 +167,7 @@ const Products = ({ prod }) => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => router.push("/signin")}>
+            <AlertDialogAction onClick={handleSignIn}>
               Sign In
             </AlertDialogAction>
           </AlertDialogFooter>

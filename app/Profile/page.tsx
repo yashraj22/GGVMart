@@ -29,20 +29,24 @@ const Profile = () => {
   }, [user]);
 
   return (
-    <div className="profile-container bg-gray-100 p-8">
-      <h1 className="text-3xl font-bold mb-4">Profile Information</h1>
-      <div className="user-info mb-4">
-        <p className="text-lg">
-          <strong>Name:</strong> {user?.user_metadata?.full_name || ""}
-        </p>
-        <p className="text-lg">
-          <strong>Email:</strong> {user?.email || "N/A"}
-        </p>
-      </div>
-
-      <div>
-        <p>My Products</p>
-        <MyProducts />
+    <div className="bg-gray-100 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-white rounded overflow-hidden">
+          <div className=" mx-5">
+            <h2 className="text-xl sm:text-xl font-bold text-gray-900 mt-5">
+              You have checked These products.
+            </h2>
+          </div>
+          <MyProducts />
+        </div>
+        <div className="bg-white rounded overflow-hidden">
+          <div className=" mx-5">
+            <h2 className="text-xl sm:text-xl font-bold text-gray-900 mt-5">
+              Your Ads
+            </h2>
+          </div>
+          <MyProducts />
+        </div>
       </div>
     </div>
   );

@@ -50,7 +50,7 @@ export default function ChatUi({
     };
 
     fetchMessages();
-  }, [user, params.slug]);
+  }, [user, params.slug, messages]);
 
   useEffect(() => {
     // Automatically scroll to the last message
@@ -82,7 +82,10 @@ export default function ChatUi({
       }
 
       const message = await res.json();
-      setMessages((prevMessages) => [...prevMessages, message]);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { ...message, senderId: user?.id },
+      ]);
       setNewMessage("");
     } catch (error) {
       console.error("Error sending message:", error);

@@ -11,9 +11,12 @@ export default function Page({ params }: { params: { slug: string } }) {
   const { user }: any = useUserAuth();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  // const scrollRef = useRef<HTMLDivElement>(null);
 
   const ownerId = params.slug[1];
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [autoScroll, setAutoScroll] = useState(true);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -41,14 +44,23 @@ export default function Page({ params }: { params: { slug: string } }) {
     };
 
     fetchMessages();
-  }, [user]);
+  }, [user, messages]);
 
   useEffect(() => {
-    // Automatically scroll to the last message
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    if (autoScroll && scrollRef.current) {
+      const scrollElement = scrollRef.current;
+      scrollElement.scrollTop = scrollElement.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, autoScroll]);
+
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+      const isScrolledToBottom =
+        Math.abs(scrollHeight - scrollTop - clientHeight) < 1;
+      setAutoScroll(isScrolledToBottom);
+    }
+  };
 
   const handleSendMessage = async (e: any) => {
     e.preventDefault();
@@ -73,7 +85,10 @@ export default function Page({ params }: { params: { slug: string } }) {
       }
 
       const message = await res.json();
-      setMessages((prevMessages) => [...prevMessages, message]);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { ...message, senderId: user?.id },
+      ]);
       setNewMessage("");
     } catch (error) {
       console.error("Error sending message:", error);
@@ -107,7 +122,11 @@ export default function Page({ params }: { params: { slug: string } }) {
           </div>
         </div>
         {/* Scrollable chat messages container */}
-        <div className="flex-1 p-4 gap-4 overflow-y-auto" ref={scrollRef}>
+        <div
+          className="flex-1 p-4 gap-4 overflow-y-auto relative"
+          ref={scrollRef}
+          onScroll={handleScroll}
+        >
           {messages.map((message: any) => {
             const isSender = message.senderId === user.id;
             return (

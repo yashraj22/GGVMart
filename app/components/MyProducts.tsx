@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/carousel";
 import { toast } from "@/components/ui/use-toast";
 
-const MyProducts = ({ productIds = [] }) => {
+const MyProducts = ({ onAdsLoaded }) => {
   const [products, setProducts] = useState([]);
   const { user }: any = useUserAuth();
 
@@ -32,25 +32,13 @@ const MyProducts = ({ productIds = [] }) => {
     if (user) {
       const fetchProducts = async () => {
         try {
-          console.log(
-            "Fetching products for user:",
-            user.identities[0].user_id,
-          );
-          console.log("Product IDs to filter:", productIds);
           const response = await fetch(
             `/api/product/myproduct/${user.identities[0].user_id}`,
           );
           const data = await response.json();
-          let filteredProducts = data.products;
-
-          // If productIds are provided, filter the products
-          if (productIds.length > 0) {
-            filteredProducts = data.products.filter((product) =>
-              productIds.includes(product.id),
-            );
-          }
-
-          setProducts(filteredProducts);
+          // Set the products using the 'products' property of the data object
+          setProducts(data.products); // Assuming 'data.products' is the array
+          onAdsLoaded(fetchProducts.length);
         } catch (error) {
           console.error("Failed to fetch products:", error);
         }
@@ -58,7 +46,7 @@ const MyProducts = ({ productIds = [] }) => {
 
       fetchProducts();
     }
-  }, [user, productIds]);
+  }, [user]);
 
   const handleDelete = async (productId) => {
     try {
@@ -87,24 +75,6 @@ const MyProducts = ({ productIds = [] }) => {
       console.error("Error deleting product:", error);
     }
   };
-
-  // useEffect(() => {
-  //   if (user) {
-  //     const fetchProducts = async () => {
-  //       try {
-  //         const response = await fetch(
-  //           `/api/product/myproduct/${user.identities[0].user_id}`,
-  //         );
-  //         const data = await response.json();
-  //         setProducts(data.products); // Assuming 'data.products' is the array
-  //       } catch (error) {
-  //         console.error("Failed to fetch products:", error);
-  //       }
-  //     };
-
-  //     fetchProducts();
-  //   }
-  // }, [user]);
 
   const renderProductCards = () => {
     return products.map((product) => (

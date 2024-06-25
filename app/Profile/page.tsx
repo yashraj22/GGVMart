@@ -115,7 +115,7 @@ const Profile = () => {
               onAdsLoaded={(adsCount) => setHasPostedAds(adsCount > 0)}
             />
             {!hasPostedAds && (
-              <p className="text-gray-600">You haven't posted any ads yet.</p>
+              <p className="text-gray-600">You have not posted any ads yet.</p>
             )}
           </div>
         </div>

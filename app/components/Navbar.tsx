@@ -6,6 +6,7 @@ import Image from "next/image";
 import { RiSearch2Line } from "react-icons/ri";
 import { RiMessage2Line } from "react-icons/ri";
 import { FaUserCircle } from "react-icons/fa";
+
 import { useUserAuth } from "../context/AuthContext";
 import {
   DropdownMenu,
@@ -103,14 +104,14 @@ const Navbar = () => {
         </div>
 
         {/* User Avatar, Add Product Button and Dropdown */}
-        <div className="flex items-center space-x-2 sm:space-x-4">
+        <div className="flex items-center space-x-2 mr-8 sm:space-x-4">
           {!user && (
             <button
               className="border rounded-full flex items-center justify-center transition-colors duration-300 hover:bg-gray-800 hover:text-white"
               onClick={loginWithGoogle}
             >
               <span className="block xs:hidden p-1">
-                <FaUserCircle size={25} />
+                <FaUserCircle size={30} />
               </span>
               <span className="hidden xs:inline-block text-xs sm:text-sm md:text-base px-2 py-1 sm:px-3 sm:py-1 md:px-5 md:py-1">
                 Sign In
@@ -120,16 +121,16 @@ const Navbar = () => {
           {user && (
             <>
               <Link href="/AddProduct">
-                <button className="h-10 w-10 sm:h-8 sm:w-auto sm:px-4 border border-gray-800 bg-black text-white rounded-full text-sm font-bold hover:text-black hover:bg-white">
+                <button className="h-10 w-10 sm:h-10 sm:w-auto sm:px-8 border border-gray-800 text-gray-800 bg-white rounded-full text-xl font-bold">
                   <span className="hidden sm:inline">SELL</span>
                   <span className="sm:hidden">+</span>
                 </button>
               </Link>
               <Link href="/chats">
-                <button className="h-8 border  w-10 sm:w-auto  sm:px-4 border border-gray-800 bg-black text-white rounded-full text-sm font-bold py-1 px-8 hover:text-black hover:bg-white hidden sm:inline">
+                <button className="h-10 w-10 sm:w-auto sm:px-8 border border-gray-800 text-gray-800 bg-white rounded-full text-xl font-bold py-1 px-8 hidden sm:inline">
                   MyChats
                 </button>
-                <button className="border hover:border-gray-800 hover:bg-white hover:text-black border-white text-white bg-black rounded-full text-xl font-bold w-10 h-10 flex items-center justify-center sm:hidden">
+                <button className="border border-white text-white bg-black rounded-full text-xl font-bold w-10 h-10 flex items-center justify-center sm:hidden">
                   <RiMessage2Line className="text-xl" />
                 </button>
               </Link>

@@ -11,7 +11,6 @@ export default function Page({ params }: { params: { slug: string } }) {
   const { user }: any = useUserAuth();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
-  // const scrollRef = useRef<HTMLDivElement>(null);
 
   const ownerId = params.slug[1];
 

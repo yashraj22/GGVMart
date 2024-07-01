@@ -10,12 +10,7 @@ import {
 import { SupabaseClient } from "@supabase/supabase-js";
 import supabase from "../util/supabaseClient";
 
-export interface User {
-  // Define your user type here if available
-  // For example:
-  // id: string;
-  // email: string;
-}
+export interface User {}
 
 interface AuthContextType {
   user: User | null;

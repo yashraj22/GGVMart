@@ -46,7 +46,6 @@ const HomePage = () => {
     <>
       <div className="container mx-auto max-w-7xl flex items-center justify-between p-4"></div>
       <Products prod={products} />{" "}
-      {/* Pass the filtered products to the Products component */}
     </>
   );
 

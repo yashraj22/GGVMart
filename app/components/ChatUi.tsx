@@ -99,6 +99,11 @@ export default function ChatUi({
     }
   };
 
+  function formatDate(string) {
+    var options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(string).toLocaleDateString([]);
+  }
+
   return (
     <div
       className="flex flex-col h-screen min-w-full items-center"
@@ -137,7 +142,7 @@ export default function ChatUi({
                 avatarAlt="User"
                 initials="JD"
                 message={message.text}
-                time={new Date().toLocaleString()}
+                time={new Date(message.createdAt).toUTCString()}
               />
             );
           })}

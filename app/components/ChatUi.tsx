@@ -21,7 +21,7 @@ export default function ChatUi({
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const ownerId = params.slug[1];
-  const userId = params.slug[2];
+  const userId = params.slug[2] ? params.slug[2] : params.slug[1];
 
   useEffect(() => {
     const fetchMessages = async () => {

@@ -1,31 +1,15 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { fetchUserDetail } from "../util/actions";
 
 const UserCard = ({ userId, chatId, onUserCardClick, avatarOnly }: any) => {
   const [userData, setuserData] = useState<any>();
 
   useEffect(() => {
-    const fetchUserDetail = async () => {
-      try {
-        const response = await fetch("/api/user/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ userId }),
-        });
-
-        const data = await response.json();
-        setuserData(data);
-        console.log("userdata");
-        console.log(data);
-      } catch (error) {
-        console.error("Failed to fetch product details:", error);
-      }
-    };
-
     if (userId) {
-      fetchUserDetail();
+      fetchUserDetail(userId).then((data) => {
+        setuserData(data);
+      });
     }
   }, [userId]);
 

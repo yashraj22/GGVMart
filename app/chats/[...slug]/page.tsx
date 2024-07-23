@@ -5,12 +5,14 @@ import { useUserAuth } from "@/app/context/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { fetchUserDetail } from "@/app/util/actions";
 
 export default function Page({ params }: { params: { slug: string } }) {
   const [newMessage, setNewMessage] = useState("");
   const { user }: any = useUserAuth();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userData, setuserData] = useState<any>();
 
   const ownerId = params.slug[1];
 
@@ -51,6 +53,14 @@ export default function Page({ params }: { params: { slug: string } }) {
       scrollElement.scrollTop = scrollElement.scrollHeight;
     }
   }, [messages, autoScroll]);
+
+  useEffect(() => {
+    if (ownerId) {
+      fetchUserDetail(ownerId).then((data) => {
+        setuserData(data);
+      });
+    }
+  }, [ownerId]);
 
   const handleScroll = () => {
     if (scrollRef.current) {
@@ -109,11 +119,16 @@ export default function Page({ params }: { params: { slug: string } }) {
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
           <div className="flex items-center space-x-4">
             <Avatar className="w-10 h-10">
-              <AvatarImage alt="User" src={user?.user_metadata?.picture} />
+              <AvatarImage
+                alt="User"
+                src={userData && userData.user.raw_user_meta_data.picture}
+              />
               <AvatarFallback>JD</AvatarFallback>
             </Avatar>
             <div className="grid gap-1.5">
-              <h2 className="text-lg font-bold">Alice</h2>
+              <h2 className="text-lg font-bold">
+                {userData && userData.user.raw_user_meta_data.name}
+              </h2>
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 Selling: Retro Bluetooth Speaker
               </p>

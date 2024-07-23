@@ -10,3 +10,23 @@ export const purgeStore = () => {
     result: () => null,
   };
 };
+
+export const fetchUserDetail = async (userId) => {
+  try {
+    const response = await fetch("/api/user/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId }),
+    });
+
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch product details:", error);
+
+    return null;
+  }
+};

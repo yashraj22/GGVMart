@@ -24,6 +24,8 @@ This is a university-specific marketplace website where students can post ads fo
 - Tailwind CSS
 - Prisma
 - Supabase
+- Redux
+- Shadcn
 
 ## Folder Structure
 

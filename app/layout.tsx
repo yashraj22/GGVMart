@@ -12,7 +12,7 @@ import { SearchProvider } from "./context/SearchContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "GGVMART",
+  title: "GGV Mart",
   description: "Second Hand MarketPlace for GGV.",
 };
 

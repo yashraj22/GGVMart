@@ -122,7 +122,7 @@ const Navbar = () => {
             <>
               <Link href="/AddProduct">
                 <button className="h-10 w-10 sm:h-10 sm:w-auto sm:px-8 border border-gray-800 text-gray-800 bg-white rounded-full text-md font-semibold">
-                  <span className="hidden sm:inline">Sell</span>
+                  <span className="hidden sm:inline">Sells</span>
                   <span className="sm:hidden">+</span>
                 </button>
               </Link>

@@ -58,7 +58,7 @@ const ProductForm = () => {
 
         // Construct the public URL
         const prefix =
-          "https://fcxinicurznowjkhcuvd.supabase.co/storage/v1/object/public/images/";
+          process.env.STORAGE_PREFIX_URL;
         const imageUrl = `${prefix}/${id}/${pid}/${file.name}`;
 
         return imageUrl;

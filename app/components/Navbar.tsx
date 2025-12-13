@@ -121,13 +121,13 @@ const Navbar = () => {
           {user && (
             <>
               <Link href="/AddProduct">
-                <button className="h-10 w-10 sm:h-10 sm:w-auto sm:px-8 border border-gray-800 text-gray-800 bg-white rounded-full text-xl font-bold">
-                  <span className="hidden sm:inline">SELL</span>
+                <button className="h-10 w-10 sm:h-10 sm:w-auto sm:px-8 border border-gray-800 text-gray-800 bg-white rounded-full text-md font-semibold">
+                  <span className="hidden sm:inline">Sell</span>
                   <span className="sm:hidden">+</span>
                 </button>
               </Link>
               <Link href="/chats">
-                <button className="h-10 w-10 sm:w-auto sm:px-8 border border-gray-800 text-gray-800 bg-white rounded-full text-xl font-bold py-1 px-8 hidden sm:inline">
+                <button className="h-10 w-10 sm:w-auto sm:px-8 border border-gray-800 text-gray-800 bg-white rounded-full text-sm font-semibold py-1 px-8 hidden sm:inline">
                   MyChats
                 </button>
                 <button className="border border-white text-white bg-black rounded-full text-xl font-bold w-10 h-10 flex items-center justify-center sm:hidden">

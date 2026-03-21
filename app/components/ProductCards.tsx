@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import ChatWithSeller from "./ChatWithSeller";
 import Image from "next/image";
 import {
@@ -15,6 +14,7 @@ import { RootState } from "../redux/store/rootReducer";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../redux/store/store";
 import { fetchChatData } from "../redux/store/chatSlice";
+import { Tag, ShoppingBag } from "lucide-react";
 
 const ProductCards = () => {
   const [products, setProducts] = useState([]);
@@ -24,89 +24,82 @@ const ProductCards = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    if (productdata) {
-      setProducts(productdata);
-    }
+    if (productdata) setProducts(productdata);
   }, [productdata]);
+
   const handleClick = (id: string) => {
-    //TO-DO: Implement fetching chat data based on productId
     dispatch(fetchChatData({ productId: id }));
   };
-  const renderProductCards = () => {
-    if (products.length === 0) {
-      return (
-        <div className="mt-10">
-          {" "}
-          <h2>User have no Products</h2>{" "}
+
+  if (products.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <div className="w-12 h-12 bg-[#f2f2f2] rounded-full flex items-center justify-center mb-4">
+          <ShoppingBag size={20} className="text-[#a8a8a8]" />
         </div>
-      );
-    }
-    return products.map((product) => (
-      <div
-        key={product.id}
-        className="p-4 flex flex-col"
-        onClick={() => handleClick(product.id)}
-      >
-        <Card className=" w-64 bg-white shadow-lg rounded-lg overflow-hidden h-full flex flex-col">
-          <div className="relative">
+        <p className="text-sm font-medium text-[#171717]">No products</p>
+        <p className="text-sm text-[#8f8f8f] mt-1">
+          No products found for this selection.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-4 mt-6">
+      {products.map((product) => (
+        <article
+          key={product.id}
+          onClick={() => handleClick(product.id)}
+          className="group w-full max-w-xs bg-white border border-[#e2e2e2] rounded-lg overflow-hidden hover:border-[#c9c9c9] hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-200 flex flex-col cursor-pointer"
+        >
+          <div className="relative overflow-hidden bg-[#fafafa]">
             <Carousel className="w-full">
               <CarouselContent>
                 {product.images.map((image, index) => (
                   <CarouselItem key={index}>
-                    <Image
-                      src={image}
-                      alt={`Product Image ${index + 1}`}
-                      className="w-full h-20 object-cover"
-                      width={320}
-                      height={160}
-                    />
+                    <div className="relative w-full h-48">
+                      <Image
+                        src={image}
+                        alt={`${product.title} — Image ${index + 1}`}
+                        fill
+                        className="object-cover group-hover:scale-[1.02] transition-transform duration-300"
+                      />
+                    </div>
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition duration-200" />
-              <CarouselNext className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition duration-200" />
+              <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-white/90 backdrop-blur-sm border border-[#e2e2e2] text-[#171717] rounded-full shadow-sm hover:bg-white transition-all opacity-0 group-hover:opacity-100" />
+              <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-white/90 backdrop-blur-sm border border-[#e2e2e2] text-[#171717] rounded-full shadow-sm hover:bg-white transition-all opacity-0 group-hover:opacity-100" />
             </Carousel>
           </div>
-          <CardContent className="flex flex-col justify-between h-full p-4">
-            <div>
-              <div className="flex justify-between">
-                <h1 className="text-xl font-bold text-gray-900 mb-2">
-                  {product.title}
-                </h1>
-              </div>
-              <div className="flex justify-start items-center mb-4 space-x-2">
-                <span className="text-xs text-gray-500">Category:</span>
-                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 h-4 rounded-full">
-                  {product.category}
-                </span>
-              </div>
-              <p className="text-gray-400 text-xs font-normal mb-4">
-                {" "}
-                {product.description}{" "}
+
+          <div className="flex flex-col flex-grow p-4 gap-3">
+            <div className="space-y-2">
+              <h2 className="text-sm font-semibold text-[#171717] leading-snug">
+                {product.title}
+              </h2>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#f2f2f2] text-[#6f6f6f] text-xs font-medium rounded-full">
+                <Tag size={10} />
+                {product.category}
+              </span>
+              <p className="text-xs text-[#8f8f8f] leading-relaxed line-clamp-2">
+                {product.description}
               </p>
             </div>
-
-            <div className="flex justify-between items-center mt-2">
-              <h1 className="text-xl font-semibold text-gray-800">
-                ₹ {product.price}
-              </h1>
+            <div className="flex items-center justify-between pt-2 border-t border-[#f2f2f2]">
+              <span className="text-base font-semibold text-[#171717]">
+                ₹{product.price}
+              </span>
               <ChatWithSeller
                 productId={product.id}
                 receiverId={product.ownerId}
               />
             </div>
-          </CardContent>
-        </Card>
-      </div>
-    ));
-  };
-
-  return (
-    // <div className="container mx-auto max-w-7xl p-0 mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-    <div className="flex flex-col items-center mt-6">
-      {renderProductCards()}
+          </div>
+        </article>
+      ))}
     </div>
-    // </div>
   );
 };
 

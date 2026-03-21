@@ -1,19 +1,19 @@
 // layout.tsx
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { AuthContextProvider } from "./context/AuthContext";
-import Navbar from "./components/Navbar"; // Adjust the import path based on your project structure
+import Navbar from "./components/Navbar";
 import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "./components/Providers";
 import store from "./redux/store/store";
 import { SearchProvider } from "./context/SearchContext";
 
-const inter = Inter({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
-  title: "GGV Mart",
-  description: "Second Hand MarketPlace for GGV.",
+  title: "GGVMart — Second Hand Marketplace",
+  description:
+    "Buy and sell second-hand items at GGV. The trusted campus marketplace.",
 };
 
 export default function RootLayout({
@@ -22,14 +22,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <AuthContextProvider>
         <Providers>
           <SearchProvider>
-            <body className={inter.className}>
-              <Navbar /> {/* Include the Navbar here */}
+            <body className="font-sans">
+              <Navbar />
               <Toaster />
-              {children}
+              <main>{children}</main>
             </body>
           </SearchProvider>
         </Providers>

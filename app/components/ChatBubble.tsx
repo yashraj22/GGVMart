@@ -17,40 +17,55 @@ const ChatBubble = ({
   message: string;
   time: string;
 }) => {
+  // Format time more concisely
+  const formattedTime = (() => {
+    try {
+      const d = new Date(time);
+      return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    } catch {
+      return time;
+    }
+  })();
+
   return (
     <div
-      className={`flex items-end space-x-4 mb-4 ${
-        isSender ? "justify-start flex-row-reverse" : ""
+      className={`flex items-end gap-2 ${
+        isSender ? "flex-row-reverse" : "flex-row"
       }`}
     >
-      <div className={`w-8 h-8 ${isSender ? "ml-4" : "mr-2"}`}>
+      {/* Avatar */}
+      <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden bg-[#f2f2f2] ring-1 ring-[#e2e2e2]">
         {avatarSrc ? (
           <Image
-            className="rounded-full"
+            className="w-full h-full object-cover"
             alt={avatarAlt}
             src={avatarSrc}
-            width={100}
-            height={100}
+            width={28}
+            height={28}
           />
         ) : (
-          <div className="bg-gray-300 flex items-center justify-center w-full h-full rounded-full">
-            <span className="text-sm font-bold">{initials}</span>
+          <div className="w-full h-full bg-[#171717] flex items-center justify-center">
+            <span className="text-white text-[10px] font-semibold uppercase">
+              {initials?.[0] || "?"}
+            </span>
           </div>
         )}
       </div>
 
+      {/* Bubble */}
       <div
-        className={`rounded-lg p-4 max-w-xs ${
-          isSender
-            ? "bg-blue-100 dark:bg-blue-800"
-            : "bg-gray-100 dark:bg-gray-800"
-        }`}
+        className={`flex flex-col gap-1 max-w-[70%] ${isSender ? "items-end" : "items-start"}`}
       >
-        <p className="text-sm">{message}</p>
-        <time className="block mt-2 text-xs text-gray-500 dark:text-gray-400">
-          <span className="sr-only">Sent at</span>
-          {time}
-        </time>
+        <div
+          className={`px-3 py-2 rounded-xl text-sm leading-relaxed ${
+            isSender
+              ? "bg-[#171717] text-white rounded-br-sm"
+              : "bg-[#f2f2f2] text-[#171717] rounded-bl-sm"
+          }`}
+        >
+          {message}
+        </div>
+        <time className="text-[10px] text-[#a8a8a8] px-1">{formattedTime}</time>
       </div>
     </div>
   );

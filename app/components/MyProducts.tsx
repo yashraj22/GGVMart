@@ -1,18 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { LuSettings2 } from "react-icons/lu";
+import { MoreHorizontal, Tag, Trash2, Pencil } from "lucide-react";
 import ChatWithSeller from "./ChatWithSeller";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
 import Image from "next/image";
 import { useUserAuth } from "../context/AuthContext";
 import {
@@ -24,8 +19,12 @@ import {
 } from "@/components/ui/carousel";
 import { toast } from "@/components/ui/use-toast";
 
-const MyProducts = ({ onAdsLoaded }) => {
-  const [products, setProducts] = useState([]);
+const MyProducts = ({
+  onAdsLoaded,
+}: {
+  onAdsLoaded: (count: number) => void;
+}) => {
+  const [products, setProducts] = useState<any[]>([]);
   const { user }: any = useUserAuth();
 
   useEffect(() => {
@@ -36,130 +35,225 @@ const MyProducts = ({ onAdsLoaded }) => {
             `/api/product/myproduct/${user.identities[0].user_id}`,
           );
           const data = await response.json();
-          // Set the products using the 'products' property of the data object
-          setProducts(data.products); // Assuming 'data.products' is the array
-          onAdsLoaded(fetchProducts.length);
+          setProducts(data.products || []);
+          onAdsLoaded((data.products || []).length);
         } catch (error) {
           console.error("Failed to fetch products:", error);
+          onAdsLoaded(0);
         }
       };
-
       fetchProducts();
     }
   }, [user]);
 
-  const handleDelete = async (productId) => {
+  const handleDelete = async (productId: string) => {
     try {
-      const response = await fetch(`/api/product/delete`, {
+      const response = await fetch("/api/product/delete", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: productId }), // Send the product ID in the body
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: productId }),
       });
       if (response.ok) {
-        // Successfully deleted the product, update state to remove the product card
         toast({
-          title: "Product Deleted",
-          description: "Your product has been successfully Deleted.",
-          className: "bg-green-500",
+          title: "Listing removed",
+          className: "bg-green-700 text-white",
         });
-
-        setProducts(products.filter((product) => product.id !== productId));
-      } else {
-        // Handle cases where the server responds with an error
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to delete the product");
+        setProducts((p) => p.filter((x) => x.id !== productId));
       }
     } catch (error) {
       console.error("Error deleting product:", error);
     }
   };
 
-  const renderProductCards = () => {
-    return products.map((product) => (
-      <div key={product.id} className="p-4">
-        <Card className="max-w-sm bg-white shadow-lg rounded-lg overflow-hidden h-full flex flex-col">
-          <div className="relative">
-            <Carousel className="w-full">
-              <CarouselContent>
-                {product.images.map((image, index) => (
-                  <CarouselItem key={index}>
-                    <Image
-                      src={image}
-                      alt={`Product Image ${index + 1}`}
-                      className="w-full h-40 object-cover"
-                      width={320}
-                      height={160}
-                    />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition duration-200" />
-              <CarouselNext className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition duration-200" />
-            </Carousel>
-          </div>
-          <CardContent className="flex flex-col justify-between h-full p-4">
-            <div>
-              <div className="flex justify-between">
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                  {product.title}
-                </h1>
-                {user && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button>
-                        <LuSettings2 />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-48">
-                      <DropdownMenuItem
-                        onClick={() =>
-                          alert("Edit functionality not implemented")
-                        }
-                      >
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleDelete(product.id)}
-                      >
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
-              </div>
-              <div className="flex justify-start items-center mb-4 space-x-2">
-                <span className="text-xs text-gray-500">Category:</span>
-                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 h-4 rounded-full">
-                  {product.category}
-                </span>
-              </div>
-              <p className="text-gray-400 text-sm font-light mb-4">
-                {" "}
-                {product.description}{" "}
-              </p>
-            </div>
-
-            <div className="flex justify-between items-center mt-10">
-              <h1 className="text-xl font-semibold text-gray-800">
-                ₹ {product.price}
-              </h1>
-              <ChatWithSeller
-                productId={product.id}
-                receiverId={product.ownerId}
-              />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    ));
-  };
+  if (products.length === 0) return null;
 
   return (
-    <div className="container mx-auto max-w-7xl p-0 mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {renderProductCards()}
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {products.map((product) => (
+        <ProductCard
+          key={product.id}
+          product={product}
+          user={user}
+          onDelete={handleDelete}
+        />
+      ))}
     </div>
+  );
+};
+
+const ProductCard = ({
+  product,
+  user,
+  onDelete,
+}: {
+  product: any;
+  user: any;
+  onDelete: (id: string) => void;
+}) => {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <article
+      className="rounded-[12px] overflow-hidden flex flex-col"
+      style={{
+        background: "#fff",
+        border: "1px solid rgba(0,0,0,0.06)",
+        boxShadow: hovered
+          ? "0 0 0 1px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.08), 0 16px 32px rgba(0,0,0,0.06)"
+          : "0 0 0 1px rgba(0,0,0,0.04)",
+        transform: hovered ? "translateY(-2px)" : "translateY(0)",
+        transition:
+          "border-color 150ms ease, box-shadow 200ms ease, transform 200ms cubic-bezier(0.34,1.56,0.64,1)",
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Image */}
+      <div
+        className="relative overflow-hidden"
+        style={{ background: "#f7f7f7" }}
+      >
+        <Carousel className="w-full">
+          <CarouselContent>
+            {product.images.map((image: string, i: number) => (
+              <CarouselItem key={i}>
+                <div className="relative w-full h-[180px]">
+                  <Image
+                    src={image}
+                    alt={`${product.title} — ${i + 1}`}
+                    fill
+                    className="object-cover"
+                    style={{
+                      transform: hovered ? "scale(1.04)" : "scale(1)",
+                      transition: "transform 400ms cubic-bezier(0.16,1,0.3,1)",
+                    }}
+                  />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          {product.images.length > 1 && (
+            <>
+              <CarouselPrevious
+                className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full transition-opacity duration-150"
+                style={{
+                  background: "rgba(255,255,255,0.9)",
+                  backdropFilter: "blur(8px)",
+                  border: "1px solid rgba(0,0,0,0.08)",
+                  color: "#171717",
+                  opacity: hovered ? 1 : 0,
+                }}
+              />
+              <CarouselNext
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full transition-opacity duration-150"
+                style={{
+                  background: "rgba(255,255,255,0.9)",
+                  backdropFilter: "blur(8px)",
+                  border: "1px solid rgba(0,0,0,0.08)",
+                  color: "#171717",
+                  opacity: hovered ? 1 : 0,
+                }}
+              />
+            </>
+          )}
+        </Carousel>
+      </div>
+
+      {/* Content */}
+      <div className="flex flex-col flex-grow p-4 gap-2.5">
+        <div className="flex items-start justify-between gap-2">
+          <h2
+            className="text-[13.5px] font-semibold leading-snug line-clamp-2 flex-1"
+            style={{ color: "#171717", letterSpacing: "-0.01em" }}
+          >
+            {product.title}
+          </h2>
+          {user && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="p-1 rounded-[6px] flex-shrink-0 transition-all duration-150"
+                  style={{
+                    color: "#a8a8a8",
+                    opacity: hovered ? 1 : 0,
+                    background: "transparent",
+                    border: "none",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.color = "#171717";
+                    (e.currentTarget as HTMLElement).style.background =
+                      "#f2f2f2";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.color = "#a8a8a8";
+                    (e.currentTarget as HTMLElement).style.background =
+                      "transparent";
+                  }}
+                >
+                  <MoreHorizontal size={14} />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="w-32 p-1 rounded-[10px]"
+                style={{
+                  border: "1px solid rgba(0,0,0,0.08)",
+                  boxShadow:
+                    "0 4px 16px rgba(0,0,0,0.08), 0 16px 40px rgba(0,0,0,0.06)",
+                  background: "rgba(255,255,255,0.95)",
+                  backdropFilter: "blur(20px)",
+                }}
+                align="end"
+              >
+                <DropdownMenuItem
+                  onClick={() => alert("Edit not implemented")}
+                  className="flex items-center gap-2 text-[12.5px] px-2 py-1.5 rounded-[6px] cursor-pointer"
+                  style={{ color: "#171717" }}
+                >
+                  <Pencil size={11} />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => onDelete(product.id)}
+                  className="flex items-center gap-2 text-[12.5px] px-2 py-1.5 rounded-[6px] cursor-pointer"
+                  style={{ color: "#c00" }}
+                >
+                  <Trash2 size={11} />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
+
+        <span
+          className="badge badge-gray self-start"
+          style={{ fontSize: 10.5 }}
+        >
+          <Tag size={9} />
+          {product.category}
+        </span>
+
+        <p
+          className="text-[12px] leading-relaxed line-clamp-2 flex-grow"
+          style={{ color: "#8f8f8f" }}
+        >
+          {product.description}
+        </p>
+
+        <div
+          className="flex items-center justify-between pt-2.5"
+          style={{ borderTop: "1px solid rgba(0,0,0,0.05)" }}
+        >
+          <span
+            className="text-[16px] font-semibold"
+            style={{ color: "#171717", letterSpacing: "-0.02em" }}
+          >
+            ₹{Number(product.price).toLocaleString("en-IN")}
+          </span>
+          <ChatWithSeller productId={product.id} receiverId={product.ownerId} />
+        </div>
+      </div>
+    </article>
   );
 };
 

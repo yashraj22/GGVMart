@@ -3,125 +3,325 @@ import React, { useEffect, useState } from "react";
 import { useUserAuth } from "../context/AuthContext";
 import MyProducts from "../components/MyProducts";
 import Image from "next/image";
+import { User, Eye, ShoppingBag, LogOut } from "lucide-react";
+import Link from "next/link";
+import { purgeStore } from "../util/actions";
+import { navigate } from "../util/redirect";
+import { useDispatch } from "react-redux";
 
 const Profile = () => {
-  const { user }: any = useUserAuth();
-  const [userChats, setUserChats] = useState([]);
+  const { user, logOut }: any = useUserAuth();
   const [checkedProductIds, setCheckedProductIds] = useState([]);
   const [productDetails, setProductDetails] = useState([]);
   const [hasPostedAds, setHasPostedAds] = useState(false);
+  const dispatch = useDispatch();
+
+  const handleLogout = async () => {
+    try {
+      await logOut();
+      navigate("/");
+      dispatch(purgeStore());
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     const fetchUserChats = async () => {
-      if (user && user.id) {
+      if (user?.id) {
         try {
           const response = await fetch(`/api/getCurrentUser?userId=${user.id}`);
           const data = await response.json();
-          console.log("Received data:", data); // Log the received data
-
           if (response.ok && data.userChats) {
-            setUserChats(data.userChats);
-            console.log("User chats:", data.userChats); // Log the user chats
-
-            const productIds = data.userChats.map((chat) => chat.productId);
-            setCheckedProductIds(productIds);
-          } else {
-            throw new Error(data.error || "Failed to fetch user chats");
+            setCheckedProductIds(data.userChats.map((c: any) => c.productId));
           }
         } catch (error) {
           console.error("Error fetching user chats:", error);
         }
       }
     };
-
     fetchUserChats();
   }, [user]);
 
   useEffect(() => {
-    fetchProductDetails(checkedProductIds);
+    const fetchProductDetails = async () => {
+      if (!checkedProductIds.length) return;
+      try {
+        const response = await fetch("/api/getCheckedProducts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productIds: checkedProductIds }),
+        });
+        const data = await response.json();
+        if (response.ok) setProductDetails(data.products);
+      } catch (error) {
+        console.error("Error fetching product details:", error);
+      }
+    };
+    fetchProductDetails();
   }, [checkedProductIds]);
 
-  const fetchProductDetails = async (productIds) => {
-    try {
-      const response = await fetch("/api/getCheckedProducts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ productIds }),
-      });
-
-      const data = await response.json();
-      console.log("Received product details:", data);
-
-      if (response.ok) {
-        setProductDetails(data.products);
-      } else {
-        throw new Error(data.error || "Failed to fetch product details");
-      }
-    } catch (error) {
-      console.error("Error fetching product details:", error);
-    }
-  };
-
-  // Rest of the component remains the same...
-  const ProductCard = ({ product }) => (
-    <div className="flex items-start p-4 border rounded-lg shadow-sm">
-      <div className="w-24 h-24 flex-shrink-0 relative rounded-md overflow-hidden">
-        <Image
-          src={product.images[0]}
-          alt={product.title}
-          layout="fill"
-          objectFit="cover"
-        />
-      </div>
-      <div className="flex-grow ml-4 flex flex-col justify-between">
-        <div>
-          <h3 className="text-sm font-semibold text-gray-800 line-clamp-1">
+  /* ── Compact product card for "viewed" section ── */
+  const ViewedCard = ({ product }: { product: any }) => (
+    <Link href={`/ProductDetails?id=${product.id}`}>
+      <div
+        className="flex items-center gap-3 p-3 rounded-[10px] cursor-pointer transition-all duration-150 group"
+        style={{ border: "1px solid rgba(0,0,0,0.06)" }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLElement).style.borderColor =
+            "rgba(0,0,0,0.12)";
+          (e.currentTarget as HTMLElement).style.background =
+            "rgba(0,0,0,0.015)";
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLElement).style.borderColor =
+            "rgba(0,0,0,0.06)";
+          (e.currentTarget as HTMLElement).style.background = "transparent";
+        }}
+      >
+        <div
+          className="relative w-14 h-14 flex-shrink-0 rounded-[8px] overflow-hidden"
+          style={{ background: "#f2f2f2" }}
+        >
+          <Image
+            src={product.images[0]}
+            alt={product.title}
+            fill
+            className="object-cover"
+          />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p
+            className="text-[13px] font-medium truncate"
+            style={{ color: "#171717" }}
+          >
             {product.title}
-          </h3>
-          <p className="text-xs text-gray-600 mt-1 line-clamp-2">
+          </p>
+          <p
+            className="text-[11.5px] mt-0.5 line-clamp-1"
+            style={{ color: "#8f8f8f" }}
+          >
             {product.description}
           </p>
-        </div>
-        <div className="mt-2">
-          <p className="text-sm text-gray-800 font-semibold">
-            ₹ {product.price}
+          <p
+            className="text-[13px] font-semibold mt-1"
+            style={{ color: "#171717" }}
+          >
+            ₹{Number(product.price).toLocaleString("en-IN")}
           </p>
         </div>
       </div>
-    </div>
+    </Link>
   );
 
   return (
-    <div className=" min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-white border rounded-lg  overflow-hidden">
-          <div className="p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
-              You have checked these products:
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {productDetails.map((product, index) => (
-                <ProductCard key={index} product={product} />
+    <div className="min-h-screen" style={{ background: "#fafafa" }}>
+      {/* ── Profile hero ── */}
+      <div
+        className="relative overflow-hidden border-b"
+        style={{ borderColor: "rgba(0,0,0,0.06)" }}
+      >
+        <div
+          className="absolute inset-0 dot-grid"
+          style={{ opacity: 0.35 }}
+          aria-hidden
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to bottom, transparent 60%, #fafafa 100%)",
+          }}
+          aria-hidden
+        />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-10">
+          <div className="flex items-start justify-between gap-4 animate-fade-up">
+            <div className="flex items-center gap-4">
+              {/* Avatar */}
+              <div
+                className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0"
+                style={{
+                  border: "2px solid rgba(0,0,0,0.06)",
+                  boxShadow:
+                    "0 0 0 1px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.06)",
+                }}
+              >
+                {user?.user_metadata?.picture ? (
+                  <Image
+                    src={user.user_metadata.picture}
+                    alt="Profile"
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-[#171717] flex items-center justify-center">
+                    <User size={28} className="text-white" />
+                  </div>
+                )}
+              </div>
+
+              {/* Info */}
+              <div>
+                <h1
+                  className="text-[20px] font-semibold"
+                  style={{ color: "#171717", letterSpacing: "-0.02em" }}
+                >
+                  {user?.user_metadata?.full_name || "GGV Student"}
+                </h1>
+                <p className="text-[13px] mt-0.5" style={{ color: "#8f8f8f" }}>
+                  {user?.email}
+                </p>
+                <div
+                  className="flex items-center gap-1.5 mt-2 text-[11.5px] font-medium"
+                  style={{ color: "#16a34a" }}
+                >
+                  <span
+                    className="inline-block w-1.5 h-1.5 rounded-full bg-[#16a34a]"
+                    style={{ boxShadow: "0 0 0 2px rgba(22,163,74,0.2)" }}
+                  />
+                  GGV Campus Member
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <button
+              onClick={handleLogout}
+              className="btn-secondary flex-shrink-0"
+              style={{
+                height: 32,
+                paddingInline: 12,
+                fontSize: 12.5,
+                color: "#8f8f8f",
+              }}
+            >
+              <LogOut size={12} strokeWidth={2} />
+              <span className="hidden sm:inline">Sign out</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Content ── */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 space-y-6">
+        {/* Viewed products */}
+        {productDetails.length > 0 && (
+          <Section
+            icon={
+              <Eye size={13} strokeWidth={2} style={{ color: "#6f6f6f" }} />
+            }
+            label="Recently viewed"
+            count={productDetails.length}
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5">
+              {productDetails.map((product: any, i: number) => (
+                <ViewedCard key={i} product={product} />
               ))}
             </div>
-          </div>
-        </div>
-        <div className="bg-white border rounded-lg overflow-hidden mt-8">
-          <div className="p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Your Ads</h2>
-            <MyProducts
-              onAdsLoaded={(adsCount) => setHasPostedAds(adsCount > 0)}
+          </Section>
+        )}
+
+        {/* My listings */}
+        <Section
+          icon={
+            <ShoppingBag
+              size={13}
+              strokeWidth={2}
+              style={{ color: "#6f6f6f" }}
             />
-            {!hasPostedAds && (
-              <p className="text-gray-600">You have not posted any ads yet.</p>
-            )}
-          </div>
-        </div>
+          }
+          label="Your listings"
+        >
+          <MyProducts onAdsLoaded={(count) => setHasPostedAds(count > 0)} />
+          {!hasPostedAds && (
+            <div className="flex flex-col items-center justify-center py-12 gap-4 text-center">
+              <div
+                className="w-12 h-12 rounded-[12px] flex items-center justify-center"
+                style={{
+                  background: "#f2f2f2",
+                  border: "1px solid rgba(0,0,0,0.06)",
+                }}
+              >
+                <ShoppingBag
+                  size={18}
+                  strokeWidth={1.5}
+                  style={{ color: "#a8a8a8" }}
+                />
+              </div>
+              <div>
+                <p
+                  className="text-[13.5px] font-medium"
+                  style={{ color: "#171717" }}
+                >
+                  No listings yet
+                </p>
+                <p className="text-[12.5px] mt-1" style={{ color: "#8f8f8f" }}>
+                  Ready to sell something?
+                </p>
+              </div>
+              <Link href="/AddProduct">
+                <button
+                  className="btn-primary"
+                  style={{ height: 34, paddingInline: 14, fontSize: 13 }}
+                >
+                  List your first item →
+                </button>
+              </Link>
+            </div>
+          )}
+        </Section>
       </div>
     </div>
   );
 };
+
+const Section = ({
+  icon,
+  label,
+  count,
+  children,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  count?: number;
+  children: React.ReactNode;
+}) => (
+  <div
+    className="rounded-[14px] overflow-hidden animate-fade-up"
+    style={{
+      background: "#fff",
+      border: "1px solid rgba(0,0,0,0.07)",
+      boxShadow: "0 0 0 1px rgba(0,0,0,0.03), 0 2px 12px rgba(0,0,0,0.04)",
+    }}
+  >
+    <div
+      className="flex items-center gap-2 px-5 py-3.5"
+      style={{ borderBottom: "1px solid rgba(0,0,0,0.05)" }}
+    >
+      {icon}
+      <p
+        className="section-label"
+        style={{
+          textTransform: "none",
+          fontSize: 12.5,
+          fontWeight: 600,
+          letterSpacing: 0,
+          color: "#171717",
+        }}
+      >
+        {label}
+      </p>
+      {count !== undefined && (
+        <span
+          className="ml-auto text-[11px] font-medium tabular-nums px-2 py-0.5 rounded-full"
+          style={{ background: "#f2f2f2", color: "#6f6f6f" }}
+        >
+          {count}
+        </span>
+      )}
+    </div>
+    <div className="p-5">{children}</div>
+  </div>
+);
 
 export default Profile;

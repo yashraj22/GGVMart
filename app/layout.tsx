@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "./components/Providers";
 import store from "./redux/store/store";
 import { SearchProvider } from "./context/SearchContext";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "GGVMart — Second Hand Marketplace",
@@ -26,11 +27,13 @@ export default function RootLayout({
       <AuthContextProvider>
         <Providers>
           <SearchProvider>
-            <body className="font-sans">
-              <Navbar />
-              <Toaster />
-              <main>{children}</main>
-            </body>
+            <ThemeProvider>
+              <body className="font-sans">
+                <Navbar />
+                <Toaster />
+                <main>{children}</main>
+              </body>
+            </ThemeProvider>
           </SearchProvider>
         </Providers>
       </AuthContextProvider>

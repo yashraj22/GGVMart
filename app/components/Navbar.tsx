@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, MessageCircle, User, Plus } from "lucide-react";
+import { Search, MessageCircle, User, Plus, Sun, Moon } from "lucide-react";
 import { useUserAuth } from "../context/AuthContext";
 import {
   DropdownMenu,
@@ -17,12 +17,15 @@ import { useSearch } from "../context/SearchContext";
 import { purgeStore } from "../util/actions";
 import { navigate } from "../util/redirect";
 import { useDispatch } from "react-redux";
+import { useTheme } from "./ThemeProvider";
 
 const Navbar = () => {
   const { user, loginWithGoogle, logOut }: any = useUserAuth();
   const dispatch = useDispatch();
   const { searchQuery, setSearchQuery, resetSearch, setProducts }: any =
     useSearch();
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === "dark";
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setSearchQuery(e.target.value);
@@ -62,10 +65,10 @@ const Navbar = () => {
       <div
         className="relative border-b"
         style={{
-          background: "rgba(250,250,250,0.85)",
+          background: isDark ? "rgba(10,10,10,0.85)" : "rgba(250,250,250,0.85)",
           backdropFilter: "blur(16px)",
           WebkitBackdropFilter: "blur(16px)",
-          borderColor: "rgba(0,0,0,0.07)",
+          borderColor: isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.07)",
         }}
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -92,7 +95,10 @@ const Navbar = () => {
                   G
                 </span>
               </div>
-              <span className="hidden sm:block text-[14px] font-semibold tracking-[-0.02em] text-[#171717]">
+              <span
+                className="hidden sm:block text-[14px] font-semibold tracking-[-0.02em]"
+                style={{ color: "var(--ds-gray-900)" }}
+              >
                 GGVMart
               </span>
             </Link>
@@ -101,9 +107,10 @@ const Navbar = () => {
             <div className="flex-1 max-w-[360px]">
               <div className="relative group">
                 <Search
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[#a8a8a8] pointer-events-none transition-colors duration-150 group-focus-within:text-[#6f6f6f]"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-150"
                   size={13}
                   strokeWidth={2}
+                  style={{ color: "var(--ds-gray-600)" }}
                 />
                 <input
                   type="text"
@@ -113,19 +120,30 @@ const Navbar = () => {
                   placeholder="Search products..."
                   className="w-full h-[34px] pl-[34px] pr-3 text-[13px] rounded-[8px] transition-all duration-150 outline-none"
                   style={{
-                    background: "rgba(0,0,0,0.04)",
-                    border: "1px solid rgba(0,0,0,0.08)",
-                    color: "#171717",
+                    background: isDark
+                      ? "rgba(255,255,255,0.06)"
+                      : "rgba(0,0,0,0.04)",
+                    border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)"}`,
+                    color: "var(--ds-gray-900)",
                   }}
                   onFocus={(e) => {
-                    e.currentTarget.style.background = "#fff";
-                    e.currentTarget.style.borderColor = "rgba(0,0,0,0.2)";
-                    e.currentTarget.style.boxShadow =
-                      "0 0 0 3px rgba(0,0,0,0.06)";
+                    e.currentTarget.style.background = isDark
+                      ? "rgba(255,255,255,0.1)"
+                      : "#fff";
+                    e.currentTarget.style.borderColor = isDark
+                      ? "rgba(255,255,255,0.2)"
+                      : "rgba(0,0,0,0.2)";
+                    e.currentTarget.style.boxShadow = isDark
+                      ? "0 0 0 3px rgba(255,255,255,0.06)"
+                      : "0 0 0 3px rgba(0,0,0,0.06)";
                   }}
                   onBlur={(e) => {
-                    e.currentTarget.style.background = "rgba(0,0,0,0.04)";
-                    e.currentTarget.style.borderColor = "rgba(0,0,0,0.08)";
+                    e.currentTarget.style.background = isDark
+                      ? "rgba(255,255,255,0.06)"
+                      : "rgba(0,0,0,0.04)";
+                    e.currentTarget.style.borderColor = isDark
+                      ? "rgba(255,255,255,0.1)"
+                      : "rgba(0,0,0,0.08)";
                     e.currentTarget.style.boxShadow = "none";
                   }}
                 />
@@ -134,6 +152,34 @@ const Navbar = () => {
 
             {/* ── Actions ── */}
             <div className="flex items-center gap-1.5 flex-shrink-0">
+              {/* Theme toggle */}
+              <button
+                id="theme-toggle-btn"
+                onClick={toggleTheme}
+                aria-label="Toggle dark mode"
+                className="relative w-[28px] h-[28px] rounded-full flex items-center justify-center transition-all duration-200"
+                style={{
+                  color: "var(--ds-gray-700)",
+                  background: "transparent",
+                  border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)"}`,
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = isDark
+                    ? "rgba(255,255,255,0.08)"
+                    : "rgba(0,0,0,0.04)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background =
+                    "transparent";
+                }}
+              >
+                {isDark ? (
+                  <Sun size={13} strokeWidth={2} />
+                ) : (
+                  <Moon size={13} strokeWidth={2} />
+                )}
+              </button>
+
               {!user && (
                 <button
                   id="sign-in-btn"
@@ -176,12 +222,12 @@ const Navbar = () => {
                         id="user-avatar-btn"
                         className="relative w-[28px] h-[28px] rounded-full overflow-hidden outline-none transition-all duration-150"
                         style={{
-                          border: "1.5px solid rgba(0,0,0,0.1)",
+                          border: `1.5px solid ${isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.1)"}`,
                           boxShadow: "0 0 0 0px rgba(0,0,0,0.1)",
                         }}
                         onMouseEnter={(e) => {
                           (e.currentTarget as HTMLElement).style.boxShadow =
-                            "0 0 0 3px rgba(0,0,0,0.08)";
+                            "0 0 0 3px rgba(128,128,128,0.15)";
                         }}
                         onMouseLeave={(e) => {
                           (e.currentTarget as HTMLElement).style.boxShadow =
@@ -205,35 +251,49 @@ const Navbar = () => {
                     <DropdownMenuContent
                       className="w-44 p-1 rounded-[10px]"
                       style={{
-                        border: "1px solid rgba(0,0,0,0.08)",
-                        boxShadow:
-                          "0 0 0 1px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.08), 0 16px 40px rgba(0,0,0,0.06)",
-                        background: "rgba(255,255,255,0.95)",
+                        border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`,
+                        boxShadow: isDark
+                          ? "0 0 0 1px rgba(255,255,255,0.04), 0 4px 16px rgba(0,0,0,0.5), 0 16px 40px rgba(0,0,0,0.4)"
+                          : "0 0 0 1px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.08), 0 16px 40px rgba(0,0,0,0.06)",
+                        background: isDark
+                          ? "rgba(17,17,17,0.97)"
+                          : "rgba(255,255,255,0.95)",
                         backdropFilter: "blur(20px)",
                       }}
                       align="end"
                       sideOffset={8}
                     >
-                      <DropdownMenuLabel className="px-2 py-1.5 text-[11px] font-medium text-[#8f8f8f] select-none">
+                      <DropdownMenuLabel
+                        className="px-2 py-1.5 text-[11px] font-medium select-none"
+                        style={{ color: "var(--ds-gray-700)" }}
+                      >
                         {user.email?.split("@")[0]}
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator
-                        style={{ background: "rgba(0,0,0,0.06)" }}
+                        style={{
+                          background: isDark
+                            ? "rgba(255,255,255,0.06)"
+                            : "rgba(0,0,0,0.06)",
+                        }}
                       />
                       <DropdownMenuItem
                         onSelect={() => navigate("/Profile")}
-                        className="text-[13px] text-[#171717] px-2 py-1.5 rounded-[6px] cursor-pointer"
-                        style={{ outline: "none" }}
+                        className="text-[13px] px-2 py-1.5 rounded-[6px] cursor-pointer"
+                        style={{ color: "var(--ds-gray-900)", outline: "none" }}
                       >
                         Profile
                       </DropdownMenuItem>
                       <DropdownMenuSeparator
-                        style={{ background: "rgba(0,0,0,0.06)" }}
+                        style={{
+                          background: isDark
+                            ? "rgba(255,255,255,0.06)"
+                            : "rgba(0,0,0,0.06)",
+                        }}
                       />
                       <DropdownMenuItem
                         onClick={handleLogout}
                         className="text-[13px] px-2 py-1.5 rounded-[6px] cursor-pointer"
-                        style={{ color: "#c00", outline: "none" }}
+                        style={{ color: "#e05252", outline: "none" }}
                       >
                         Log out
                       </DropdownMenuItem>

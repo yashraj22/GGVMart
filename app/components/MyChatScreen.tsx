@@ -62,21 +62,39 @@ const MyChatScreen = () => {
 
   return (
     <div
-      className="flex mx-auto max-w-7xl w-full border-x border-[#e2e2e2] bg-white"
-      style={{ height: "calc(100vh - 56px)" }}
+      className="flex mx-auto max-w-7xl w-full border-x"
+      style={{
+        height: "calc(100vh - 56px)",
+        borderColor: "var(--ds-gray-400)",
+        background: "var(--ds-background-100)",
+      }}
     >
       {/* Sidebar — full on md+ */}
-      <div className="hidden md:flex flex-col w-72 border-r border-[#e2e2e2] flex-shrink-0">
-        <div className="px-4 py-3 border-b border-[#f2f2f2]">
-          <p className="text-xs font-semibold text-[#6f6f6f] uppercase tracking-wide">
+      <div
+        className="hidden md:flex flex-col w-72 flex-shrink-0"
+        style={{ borderRight: "1px solid var(--ds-gray-400)" }}
+      >
+        <div
+          className="px-4 py-3"
+          style={{ borderBottom: "1px solid var(--ds-gray-200)" }}
+        >
+          <p
+            className="text-xs font-semibold uppercase tracking-wide"
+            style={{ color: "var(--ds-gray-800)" }}
+          >
             Conversations
           </p>
         </div>
         <div className="flex-1 overflow-y-auto">
           {!chatsData || chatsData.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full gap-2 py-12 px-4 text-center">
-              <MessageCircle size={24} className="text-[#c9c9c9]" />
-              <p className="text-sm text-[#8f8f8f]">No conversations yet</p>
+              <MessageCircle
+                size={24}
+                style={{ color: "var(--ds-gray-500)" }}
+              />
+              <p className="text-sm" style={{ color: "var(--ds-gray-700)" }}>
+                No conversations yet
+              </p>
             </div>
           ) : (
             chatsData.map((chat) => (
@@ -93,8 +111,14 @@ const MyChatScreen = () => {
       </div>
 
       {/* Sidebar — icon only on mobile */}
-      <div className="flex md:hidden flex-col w-14 border-r border-[#e2e2e2] flex-shrink-0">
-        <div className="h-10 border-b border-[#f2f2f2]" />
+      <div
+        className="flex md:hidden flex-col w-14 flex-shrink-0"
+        style={{ borderRight: "1px solid var(--ds-gray-400)" }}
+      >
+        <div
+          className="h-10"
+          style={{ borderBottom: "1px solid var(--ds-gray-200)" }}
+        />
         <div className="flex-1 overflow-y-auto">
           {chatsData?.map((chat) => (
             <UserCard

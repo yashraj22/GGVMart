@@ -99,24 +99,50 @@ export default function ChatUi({
       className="flex flex-col min-w-full"
       style={{ height: "calc(100vh - 56px)" }}
     >
-      <div className="flex flex-col h-full min-w-full border-l border-[#e2e2e2] bg-white overflow-hidden">
+      <div
+        className="flex flex-col h-full min-w-full overflow-hidden"
+        style={{
+          borderLeft: "1px solid var(--ds-gray-400)",
+          background: "var(--ds-background-100)",
+        }}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-[#f2f2f2] flex-shrink-0">
+        <div
+          className="flex items-center justify-between px-4 py-3 flex-shrink-0"
+          style={{ borderBottom: "1px solid var(--ds-gray-200)" }}
+        >
           <div className="flex items-center gap-3">
-            <Avatar className="w-8 h-8 ring-1 ring-[#e2e2e2]">
+            <Avatar
+              className="w-8 h-8"
+              style={{ boxShadow: "0 0 0 1px var(--ds-gray-400)" }}
+            >
               <AvatarImage
                 alt={recipientName || "User"}
                 src={recipientPicture}
               />
-              <AvatarFallback className="bg-[#f2f2f2] text-[#6f6f6f] text-xs font-medium">
+              <AvatarFallback
+                className="text-xs font-medium"
+                style={{
+                  background: "var(--ds-gray-200)",
+                  color: "var(--ds-gray-800)",
+                }}
+              >
                 {recipientName?.[0] || "?"}
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-sm font-medium text-[#171717]">
+              <p
+                className="text-sm font-medium"
+                style={{ color: "var(--ds-gray-900)" }}
+              >
                 {recipientName || "Seller"}
               </p>
-              <p className="text-xs text-[#8f8f8f] mt-0.5">Online</p>
+              <p
+                className="text-xs mt-0.5"
+                style={{ color: "var(--ds-gray-700)" }}
+              >
+                Online
+              </p>
             </div>
           </div>
           <ProductSideSheet />
@@ -129,14 +155,23 @@ export default function ChatUi({
         >
           {loading ? (
             <div className="flex items-center justify-center h-full">
-              <div className="w-5 h-5 border-2 border-[#e2e2e2] border-t-[#171717] rounded-full animate-spin" />
+              <div
+                className="w-5 h-5 rounded-full animate-spin"
+                style={{
+                  border: "2px solid var(--ds-gray-400)",
+                  borderTopColor: "var(--ds-gray-900)",
+                }}
+              />
             </div>
           ) : messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center gap-2">
-              <p className="text-sm font-medium text-[#171717]">
+              <p
+                className="text-sm font-medium"
+                style={{ color: "var(--ds-gray-900)" }}
+              >
                 No messages yet
               </p>
-              <p className="text-xs text-[#8f8f8f]">
+              <p className="text-xs" style={{ color: "var(--ds-gray-700)" }}>
                 Say hello to start the conversation!
               </p>
             </div>
@@ -161,19 +196,28 @@ export default function ChatUi({
         </div>
 
         {/* Footer */}
-        <div className="flex items-end gap-3 px-4 py-3 border-t border-[#f2f2f2] flex-shrink-0">
+        <div
+          className="flex items-end gap-3 px-4 py-3 flex-shrink-0"
+          style={{ borderTop: "1px solid var(--ds-gray-200)" }}
+        >
           <textarea
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Type a message..."
             rows={1}
-            className="flex-1 resize-none px-3 py-2.5 bg-[#fafafa] border border-[#e2e2e2] rounded-lg text-sm text-[#171717] placeholder:text-[#a8a8a8] focus:outline-none focus:border-[#171717] focus:ring-2 focus:ring-[#171717]/10 transition-all max-h-[100px] overflow-y-auto"
+            className="flex-1 resize-none px-3 py-2.5 rounded-lg text-sm transition-all max-h-[100px] overflow-y-auto outline-none"
+            style={{
+              background: "var(--ds-gray-100)",
+              border: "1px solid var(--ds-gray-400)",
+              color: "var(--ds-gray-900)",
+            }}
           />
           <button
             onClick={handleSendMessage}
             disabled={!newMessage.trim()}
-            className="flex-shrink-0 w-9 h-9 bg-[#171717] text-white rounded-lg flex items-center justify-center hover:bg-[#383838] active:bg-[#171717] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="btn-primary flex-shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
+            style={{ width: 36, height: 36, padding: 0 }}
           >
             <Send size={14} />
           </button>

@@ -9,6 +9,7 @@ import { fetchData } from "./redux/store/dataSlice";
 import supabase from "./util/supabaseClient";
 import Link from "next/link";
 import { ArrowRight, ShoppingBag, Tag } from "lucide-react";
+import { useTheme } from "./components/ThemeProvider";
 
 const CATEGORIES = [
   { label: "All", value: null },
@@ -24,6 +25,8 @@ const HomePage = () => {
   const { products, setProducts } = useSearch();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const dispatch: AppDispatch = useDispatch();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -70,7 +73,9 @@ const HomePage = () => {
       {/* ── Hero Section ── */}
       <section
         className="relative overflow-hidden border-b"
-        style={{ borderColor: "rgba(0,0,0,0.06)" }}
+        style={{
+          borderColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)",
+        }}
       >
         {/* Dot grid background */}
         <div
@@ -91,7 +96,9 @@ const HomePage = () => {
         <div
           className="absolute bottom-0 inset-x-0 h-24"
           style={{
-            background: "linear-gradient(to bottom, transparent, #fafafa)",
+            background: isDark
+              ? "linear-gradient(to bottom, transparent, #0a0a0a)"
+              : "linear-gradient(to bottom, transparent, #fafafa)",
           }}
           aria-hidden="true"
         />
@@ -120,13 +127,13 @@ const HomePage = () => {
           <div className="text-center space-y-3 animate-fade-up">
             <h1
               className="text-[32px] sm:text-[40px] font-semibold tracking-[-0.04em] leading-[1.1]"
-              style={{ color: "#171717" }}
+              style={{ color: "var(--ds-gray-900)" }}
             >
               Buy &amp; sell on campus, <br className="hidden sm:block" />
               <span
                 style={{
                   background:
-                    "linear-gradient(135deg, #6f6f6f 0%, #171717 50%, #6f6f6f 100%)",
+                    "linear-gradient(135deg, var(--ds-gray-700) 0%, var(--ds-gray-1000) 50%, var(--ds-gray-700) 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -137,7 +144,7 @@ const HomePage = () => {
             </h1>
             <p
               className="text-[15px] leading-relaxed max-w-md mx-auto animate-fade-up animation-delay-100"
-              style={{ color: "#6f6f6f" }}
+              style={{ color: "var(--ds-gray-800)" }}
             >
               The trusted second-hand marketplace for GGV students. Find great
               deals or list your items in seconds.
@@ -182,10 +189,10 @@ const HomePage = () => {
         className="sticky border-b z-40"
         style={{
           top: 52,
-          background: "rgba(250,250,250,0.9)",
+          background: isDark ? "rgba(10,10,10,0.9)" : "rgba(250,250,250,0.9)",
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",
-          borderColor: "rgba(0,0,0,0.06)",
+          borderColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)",
         }}
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -198,9 +205,17 @@ const HomePage = () => {
                   onClick={() => handleCategory(cat.value)}
                   className="flex-shrink-0 rounded-[8px] px-3 py-1.5 text-[12.5px] font-medium transition-all duration-150"
                   style={{
-                    background: isActive ? "#171717" : "transparent",
-                    color: isActive ? "#fff" : "#6f6f6f",
-                    border: `1px solid ${isActive ? "#171717" : "rgba(0,0,0,0.08)"}`,
+                    background: isActive ? "var(--ds-gray-900)" : "transparent",
+                    color: isActive
+                      ? "var(--ds-background-100)"
+                      : "var(--ds-gray-800)",
+                    border: `1px solid ${
+                      isActive
+                        ? "var(--ds-gray-900)"
+                        : isDark
+                          ? "rgba(255,255,255,0.1)"
+                          : "rgba(0,0,0,0.08)"
+                    }`,
                   }}
                 >
                   {cat.label}

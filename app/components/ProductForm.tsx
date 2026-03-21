@@ -5,6 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Sparkles, Upload, X, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useTheme } from "./ThemeProvider";
 
 const ProductForm = () => {
   const [title, setTitle] = useState("");
@@ -19,6 +20,8 @@ const ProductForm = () => {
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = Array.from(event.target.files || []);
@@ -130,11 +133,16 @@ const ProductForm = () => {
   ];
 
   return (
-    <div className="min-h-screen" style={{ background: "#fafafa" }}>
+    <div
+      className="min-h-screen"
+      style={{ background: "var(--ds-background-200)" }}
+    >
       {/* Page header */}
       <div
         className="border-b relative overflow-hidden"
-        style={{ borderColor: "rgba(0,0,0,0.06)" }}
+        style={{
+          borderColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)",
+        }}
       >
         {/* Dot grid */}
         <div
@@ -145,8 +153,9 @@ const ProductForm = () => {
         <div
           className="absolute inset-0"
           style={{
-            background:
-              "radial-gradient(ellipse 60% 80% at 50% 100%, rgba(0,0,0,0.03) 0%, transparent 70%)",
+            background: isDark
+              ? "radial-gradient(ellipse 60% 80% at 50% 100%, rgba(255,255,255,0.02) 0%, transparent 70%)"
+              : "radial-gradient(ellipse 60% 80% at 50% 100%, rgba(0,0,0,0.03) 0%, transparent 70%)",
           }}
           aria-hidden
         />
@@ -155,11 +164,14 @@ const ProductForm = () => {
             <span className="section-label block mb-3">New listing</span>
             <h1
               className="text-[28px] font-semibold tracking-tight"
-              style={{ color: "#171717", letterSpacing: "-0.03em" }}
+              style={{ color: "var(--ds-gray-900)", letterSpacing: "-0.03em" }}
             >
               List an item
             </h1>
-            <p className="text-[13.5px] mt-2" style={{ color: "#8f8f8f" }}>
+            <p
+              className="text-[13.5px] mt-2"
+              style={{ color: "var(--ds-gray-700)" }}
+            >
               Fill in the details below. Your item will be live in seconds.
             </p>
           </div>
@@ -173,10 +185,9 @@ const ProductForm = () => {
           <div
             className="rounded-[14px] p-6 space-y-5"
             style={{
-              background: "#fff",
-              border: "1px solid rgba(0,0,0,0.07)",
-              boxShadow:
-                "0 0 0 1px rgba(0,0,0,0.03), 0 2px 12px rgba(0,0,0,0.04)",
+              background: "var(--ds-background-100)",
+              border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.07)"}`,
+              boxShadow: `0 0 0 1px ${isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)"}, 0 2px 12px rgba(0,0,0,0.04)`,
             }}
           >
             {/* Title */}
@@ -211,13 +222,15 @@ const ProductForm = () => {
                   disabled={fixingDesc || !description}
                   title="Enhance with AI"
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-[5px] p-1 transition-colors duration-150 disabled:opacity-30"
-                  style={{ color: "#a8a8a8" }}
+                  style={{ color: "var(--ds-gray-600)" }}
                   onMouseEnter={(e) => {
                     if (!fixingDesc && description)
-                      (e.currentTarget as HTMLElement).style.color = "#0072f5";
+                      (e.currentTarget as HTMLElement).style.color =
+                        "var(--ds-blue-700)";
                   }}
                   onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.color = "#a8a8a8";
+                    (e.currentTarget as HTMLElement).style.color =
+                      "var(--ds-gray-600)";
                   }}
                 >
                   <Sparkles
@@ -226,7 +239,10 @@ const ProductForm = () => {
                   />
                 </button>
               </div>
-              <p className="text-[11px] mt-1.5" style={{ color: "#a8a8a8" }}>
+              <p
+                className="text-[11px] mt-1.5"
+                style={{ color: "var(--ds-gray-600)" }}
+              >
                 Tap ✦ to improve your description with AI
               </p>
             </Field>
@@ -254,7 +270,7 @@ const ProductForm = () => {
               <div className="relative">
                 <span
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-[13px] select-none"
-                  style={{ color: "#a8a8a8" }}
+                  style={{ color: "var(--ds-gray-600)" }}
                 >
                   ₹
                 </span>
@@ -277,10 +293,9 @@ const ProductForm = () => {
           <div
             className="rounded-[14px] p-6 space-y-4"
             style={{
-              background: "#fff",
-              border: "1px solid rgba(0,0,0,0.07)",
-              boxShadow:
-                "0 0 0 1px rgba(0,0,0,0.03), 0 2px 12px rgba(0,0,0,0.04)",
+              background: "var(--ds-background-100)",
+              border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.07)"}`,
+              boxShadow: `0 0 0 1px ${isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)"}, 0 2px 12px rgba(0,0,0,0.04)`,
             }}
           >
             <p className="section-label">Images</p>
@@ -291,45 +306,51 @@ const ProductForm = () => {
               onClick={() => fileInputRef.current?.click()}
               className="w-full rounded-[10px] flex flex-col items-center justify-center py-8 gap-3 transition-all duration-150 cursor-pointer group"
               style={{
-                border: "1.5px dashed rgba(0,0,0,0.12)",
-                background: "rgba(0,0,0,0.015)",
+                border: `1.5px dashed ${isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.12)"}`,
+                background: isDark
+                  ? "rgba(255,255,255,0.02)"
+                  : "rgba(0,0,0,0.015)",
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor =
-                  "rgba(0,0,0,0.2)";
-                (e.currentTarget as HTMLElement).style.background =
-                  "rgba(0,0,0,0.025)";
+                (e.currentTarget as HTMLElement).style.borderColor = isDark
+                  ? "rgba(255,255,255,0.25)"
+                  : "rgba(0,0,0,0.2)";
+                (e.currentTarget as HTMLElement).style.background = isDark
+                  ? "rgba(255,255,255,0.04)"
+                  : "rgba(0,0,0,0.025)";
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor =
-                  "rgba(0,0,0,0.12)";
-                (e.currentTarget as HTMLElement).style.background =
-                  "rgba(0,0,0,0.015)";
+                (e.currentTarget as HTMLElement).style.borderColor = isDark
+                  ? "rgba(255,255,255,0.15)"
+                  : "rgba(0,0,0,0.12)";
+                (e.currentTarget as HTMLElement).style.background = isDark
+                  ? "rgba(255,255,255,0.02)"
+                  : "rgba(0,0,0,0.015)";
               }}
             >
               <div
                 className="w-10 h-10 rounded-[10px] flex items-center justify-center transition-colors duration-150"
                 style={{
-                  background: "#f2f2f2",
-                  border: "1px solid rgba(0,0,0,0.07)",
+                  background: "var(--ds-gray-200)",
+                  border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.07)"}`,
                 }}
               >
                 <Upload
                   size={16}
                   strokeWidth={1.5}
-                  style={{ color: "#6f6f6f" }}
+                  style={{ color: "var(--ds-gray-800)" }}
                 />
               </div>
               <div className="text-center">
                 <p
                   className="text-[13px] font-medium"
-                  style={{ color: "#171717" }}
+                  style={{ color: "var(--ds-gray-900)" }}
                 >
                   Click to upload images
                 </p>
                 <p
                   className="text-[11.5px] mt-0.5"
-                  style={{ color: "#a8a8a8" }}
+                  style={{ color: "var(--ds-gray-600)" }}
                 >
                   PNG, JPG, WEBP · up to 10 MB each
                 </p>
@@ -355,7 +376,7 @@ const ProductForm = () => {
                     className="relative group rounded-[8px] overflow-hidden"
                     style={{
                       aspectRatio: "1",
-                      border: "1px solid rgba(0,0,0,0.07)",
+                      border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.07)"}`,
                     }}
                   >
                     <Image

@@ -8,6 +8,7 @@ import Link from "next/link";
 import { purgeStore } from "../util/actions";
 import { navigate } from "../util/redirect";
 import { useDispatch } from "react-redux";
+import { useTheme } from "../components/ThemeProvider";
 
 const Profile = () => {
   const { user, logOut }: any = useUserAuth();
@@ -15,6 +16,8 @@ const Profile = () => {
   const [productDetails, setProductDetails] = useState([]);
   const [hasPostedAds, setHasPostedAds] = useState(false);
   const dispatch = useDispatch();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   const handleLogout = async () => {
     try {
@@ -66,22 +69,27 @@ const Profile = () => {
     <Link href={`/ProductDetails?id=${product.id}`}>
       <div
         className="flex items-center gap-3 p-3 rounded-[10px] cursor-pointer transition-all duration-150 group"
-        style={{ border: "1px solid rgba(0,0,0,0.06)" }}
+        style={{
+          border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"}`,
+        }}
         onMouseEnter={(e) => {
-          (e.currentTarget as HTMLElement).style.borderColor =
-            "rgba(0,0,0,0.12)";
-          (e.currentTarget as HTMLElement).style.background =
-            "rgba(0,0,0,0.015)";
+          (e.currentTarget as HTMLElement).style.borderColor = isDark
+            ? "rgba(255,255,255,0.15)"
+            : "rgba(0,0,0,0.12)";
+          (e.currentTarget as HTMLElement).style.background = isDark
+            ? "rgba(255,255,255,0.03)"
+            : "rgba(0,0,0,0.015)";
         }}
         onMouseLeave={(e) => {
-          (e.currentTarget as HTMLElement).style.borderColor =
-            "rgba(0,0,0,0.06)";
+          (e.currentTarget as HTMLElement).style.borderColor = isDark
+            ? "rgba(255,255,255,0.08)"
+            : "rgba(0,0,0,0.06)";
           (e.currentTarget as HTMLElement).style.background = "transparent";
         }}
       >
         <div
           className="relative w-14 h-14 flex-shrink-0 rounded-[8px] overflow-hidden"
-          style={{ background: "#f2f2f2" }}
+          style={{ background: "var(--ds-gray-200)" }}
         >
           <Image
             src={product.images[0]}
@@ -93,19 +101,19 @@ const Profile = () => {
         <div className="min-w-0 flex-1">
           <p
             className="text-[13px] font-medium truncate"
-            style={{ color: "#171717" }}
+            style={{ color: "var(--ds-gray-900)" }}
           >
             {product.title}
           </p>
           <p
             className="text-[11.5px] mt-0.5 line-clamp-1"
-            style={{ color: "#8f8f8f" }}
+            style={{ color: "var(--ds-gray-700)" }}
           >
             {product.description}
           </p>
           <p
             className="text-[13px] font-semibold mt-1"
-            style={{ color: "#171717" }}
+            style={{ color: "var(--ds-gray-900)" }}
           >
             ₹{Number(product.price).toLocaleString("en-IN")}
           </p>
@@ -115,11 +123,16 @@ const Profile = () => {
   );
 
   return (
-    <div className="min-h-screen" style={{ background: "#fafafa" }}>
+    <div
+      className="min-h-screen"
+      style={{ background: "var(--ds-background-200)" }}
+    >
       {/* ── Profile hero ── */}
       <div
         className="relative overflow-hidden border-b"
-        style={{ borderColor: "rgba(0,0,0,0.06)" }}
+        style={{
+          borderColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)",
+        }}
       >
         <div
           className="absolute inset-0 dot-grid"
@@ -129,8 +142,9 @@ const Profile = () => {
         <div
           className="absolute inset-0"
           style={{
-            background:
-              "linear-gradient(to bottom, transparent 60%, #fafafa 100%)",
+            background: isDark
+              ? "linear-gradient(to bottom, transparent 60%, #0a0a0a 100%)"
+              : "linear-gradient(to bottom, transparent 60%, #fafafa 100%)",
           }}
           aria-hidden
         />
@@ -141,9 +155,8 @@ const Profile = () => {
               <div
                 className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0"
                 style={{
-                  border: "2px solid rgba(0,0,0,0.06)",
-                  boxShadow:
-                    "0 0 0 1px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.06)",
+                  border: `2px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"}`,
+                  boxShadow: `0 0 0 1px ${isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)"}, 0 2px 8px rgba(0,0,0,0.06)`,
                 }}
               >
                 {user?.user_metadata?.picture ? (
@@ -164,11 +177,17 @@ const Profile = () => {
               <div>
                 <h1
                   className="text-[20px] font-semibold"
-                  style={{ color: "#171717", letterSpacing: "-0.02em" }}
+                  style={{
+                    color: "var(--ds-gray-900)",
+                    letterSpacing: "-0.02em",
+                  }}
                 >
                   {user?.user_metadata?.full_name || "GGV Student"}
                 </h1>
-                <p className="text-[13px] mt-0.5" style={{ color: "#8f8f8f" }}>
+                <p
+                  className="text-[13px] mt-0.5"
+                  style={{ color: "var(--ds-gray-700)" }}
+                >
                   {user?.email}
                 </p>
                 <div
@@ -192,7 +211,7 @@ const Profile = () => {
                 height: 32,
                 paddingInline: 12,
                 fontSize: 12.5,
-                color: "#8f8f8f",
+                color: "var(--ds-gray-700)",
               }}
             >
               <LogOut size={12} strokeWidth={2} />
@@ -208,10 +227,15 @@ const Profile = () => {
         {productDetails.length > 0 && (
           <Section
             icon={
-              <Eye size={13} strokeWidth={2} style={{ color: "#6f6f6f" }} />
+              <Eye
+                size={13}
+                strokeWidth={2}
+                style={{ color: "var(--ds-gray-800)" }}
+              />
             }
             label="Recently viewed"
             count={productDetails.length}
+            isDark={isDark}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5">
               {productDetails.map((product: any, i: number) => (
@@ -227,10 +251,11 @@ const Profile = () => {
             <ShoppingBag
               size={13}
               strokeWidth={2}
-              style={{ color: "#6f6f6f" }}
+              style={{ color: "var(--ds-gray-800)" }}
             />
           }
           label="Your listings"
+          isDark={isDark}
         >
           <MyProducts onAdsLoaded={(count) => setHasPostedAds(count > 0)} />
           {!hasPostedAds && (
@@ -238,24 +263,27 @@ const Profile = () => {
               <div
                 className="w-12 h-12 rounded-[12px] flex items-center justify-center"
                 style={{
-                  background: "#f2f2f2",
-                  border: "1px solid rgba(0,0,0,0.06)",
+                  background: "var(--ds-gray-200)",
+                  border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
                 }}
               >
                 <ShoppingBag
                   size={18}
                   strokeWidth={1.5}
-                  style={{ color: "#a8a8a8" }}
+                  style={{ color: "var(--ds-gray-600)" }}
                 />
               </div>
               <div>
                 <p
                   className="text-[13.5px] font-medium"
-                  style={{ color: "#171717" }}
+                  style={{ color: "var(--ds-gray-900)" }}
                 >
                   No listings yet
                 </p>
-                <p className="text-[12.5px] mt-1" style={{ color: "#8f8f8f" }}>
+                <p
+                  className="text-[12.5px] mt-1"
+                  style={{ color: "var(--ds-gray-700)" }}
+                >
                   Ready to sell something?
                 </p>
               </div>
@@ -280,23 +308,27 @@ const Section = ({
   label,
   count,
   children,
+  isDark,
 }: {
   icon: React.ReactNode;
   label: string;
   count?: number;
   children: React.ReactNode;
+  isDark: boolean;
 }) => (
   <div
     className="rounded-[14px] overflow-hidden animate-fade-up"
     style={{
-      background: "#fff",
-      border: "1px solid rgba(0,0,0,0.07)",
-      boxShadow: "0 0 0 1px rgba(0,0,0,0.03), 0 2px 12px rgba(0,0,0,0.04)",
+      background: "var(--ds-background-100)",
+      border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.07)"}`,
+      boxShadow: `0 0 0 1px ${isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)"}, 0 2px 12px rgba(0,0,0,0.04)`,
     }}
   >
     <div
       className="flex items-center gap-2 px-5 py-3.5"
-      style={{ borderBottom: "1px solid rgba(0,0,0,0.05)" }}
+      style={{
+        borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)"}`,
+      }}
     >
       {icon}
       <p
@@ -306,7 +338,7 @@ const Section = ({
           fontSize: 12.5,
           fontWeight: 600,
           letterSpacing: 0,
-          color: "#171717",
+          color: "var(--ds-gray-900)",
         }}
       >
         {label}
@@ -314,7 +346,10 @@ const Section = ({
       {count !== undefined && (
         <span
           className="ml-auto text-[11px] font-medium tabular-nums px-2 py-0.5 rounded-full"
-          style={{ background: "#f2f2f2", color: "#6f6f6f" }}
+          style={{
+            background: "var(--ds-gray-200)",
+            color: "var(--ds-gray-800)",
+          }}
         >
           {count}
         </span>

@@ -34,7 +34,13 @@ const ChatBubble = ({
       }`}
     >
       {/* Avatar */}
-      <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden bg-[#f2f2f2] ring-1 ring-[#e2e2e2]">
+      <div
+        className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden"
+        style={{
+          background: "var(--ds-gray-200)",
+          boxShadow: "0 0 0 1px var(--ds-gray-400)",
+        }}
+      >
         {avatarSrc ? (
           <Image
             className="w-full h-full object-cover"
@@ -44,8 +50,14 @@ const ChatBubble = ({
             height={28}
           />
         ) : (
-          <div className="w-full h-full bg-[#171717] flex items-center justify-center">
-            <span className="text-white text-[10px] font-semibold uppercase">
+          <div
+            className="w-full h-full flex items-center justify-center"
+            style={{ background: "var(--ds-gray-900)" }}
+          >
+            <span
+              className="text-[10px] font-semibold uppercase"
+              style={{ color: "var(--ds-background-100)" }}
+            >
               {initials?.[0] || "?"}
             </span>
           </div>
@@ -58,14 +70,28 @@ const ChatBubble = ({
       >
         <div
           className={`px-3 py-2 rounded-xl text-sm leading-relaxed ${
-            isSender
-              ? "bg-[#171717] text-white rounded-br-sm"
-              : "bg-[#f2f2f2] text-[#171717] rounded-bl-sm"
+            isSender ? "rounded-br-sm" : "rounded-bl-sm"
           }`}
+          style={
+            isSender
+              ? {
+                  background: "var(--ds-gray-900)",
+                  color: "var(--ds-background-100)",
+                }
+              : {
+                  background: "var(--ds-gray-200)",
+                  color: "var(--ds-gray-900)",
+                }
+          }
         >
           {message}
         </div>
-        <time className="text-[10px] text-[#a8a8a8] px-1">{formattedTime}</time>
+        <time
+          className="text-[10px] px-1"
+          style={{ color: "var(--ds-gray-600)" }}
+        >
+          {formattedTime}
+        </time>
       </div>
     </div>
   );

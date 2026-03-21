@@ -18,6 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useTheme } from "../components/ThemeProvider";
 
 const ProductDetails = () => {
   const searchParams = useSearchParams();
@@ -27,6 +28,8 @@ const ProductDetails = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [showAuthAlert, setShowAuthAlert] = useState(false);
   const { loginWithGoogle } = useUserAuth();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   const handleSignIn = async () => {
     try {
@@ -58,7 +61,7 @@ const ProductDetails = () => {
         <Loader2
           size={20}
           className="animate-spin"
-          style={{ color: "#a8a8a8" }}
+          style={{ color: "var(--ds-gray-600)" }}
         />
       </div>
     );
@@ -67,15 +70,22 @@ const ProductDetails = () => {
   if (!product) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
-        <ImageOff size={32} strokeWidth={1.5} style={{ color: "#c9c9c9" }} />
+        <ImageOff
+          size={32}
+          strokeWidth={1.5}
+          style={{ color: "var(--ds-gray-500)" }}
+        />
         <div className="text-center">
-          <p className="text-[14px] font-medium" style={{ color: "#171717" }}>
+          <p
+            className="text-[14px] font-medium"
+            style={{ color: "var(--ds-gray-900)" }}
+          >
             Product not found
           </p>
           <Link
             href="/"
             className="text-[13px] mt-1 inline-block underline underline-offset-2"
-            style={{ color: "#8f8f8f" }}
+            style={{ color: "var(--ds-gray-700)" }}
           >
             Back to marketplace
           </Link>
@@ -86,15 +96,22 @@ const ProductDetails = () => {
 
   return (
     <>
-      <div className="min-h-screen" style={{ background: "#fafafa" }}>
+      <div
+        className="min-h-screen"
+        style={{ background: "var(--ds-background-200)" }}
+      >
         <div className="mx-auto max-w-6xl px-4 sm:px-6 py-6 lg:py-10">
           {/* Back */}
           <Link
             href="/"
             className="inline-flex items-center gap-1.5 mb-7 text-[13px] transition-colors duration-150 group"
-            style={{ color: "#8f8f8f" }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#171717")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#8f8f8f")}
+            style={{ color: "var(--ds-gray-700)" }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.color = "var(--ds-gray-900)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.color = "var(--ds-gray-700)")
+            }
           >
             <ArrowLeft
               size={13}
@@ -111,10 +128,9 @@ const ProductDetails = () => {
               <div
                 className="relative overflow-hidden rounded-[14px]"
                 style={{
-                  background: "#f2f2f2",
-                  border: "1px solid rgba(0,0,0,0.06)",
-                  boxShadow:
-                    "0 0 0 1px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.04)",
+                  background: "var(--ds-gray-200)",
+                  border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+                  boxShadow: `0 0 0 1px ${isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)"}, 0 2px 8px rgba(0,0,0,0.04)`,
                   aspectRatio: "4/3",
                 }}
               >
@@ -138,11 +154,11 @@ const ProductDetails = () => {
                       style={{
                         width: 64,
                         height: 64,
-                        border: `2px solid ${selectedImage === i ? "#171717" : "rgba(0,0,0,0.06)"}`,
-                        background: "#f7f7f7",
+                        border: `2px solid ${selectedImage === i ? "var(--ds-gray-900)" : isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"}`,
+                        background: "var(--ds-gray-100)",
                         boxShadow:
                           selectedImage === i
-                            ? "0 0 0 3px rgba(0,0,0,0.08)"
+                            ? "0 0 0 3px rgba(128,128,128,0.15)"
                             : "none",
                       }}
                     >
@@ -172,7 +188,10 @@ const ProductDetails = () => {
               {/* Title */}
               <h1
                 className="text-[24px] font-semibold leading-tight"
-                style={{ color: "#171717", letterSpacing: "-0.03em" }}
+                style={{
+                  color: "var(--ds-gray-900)",
+                  letterSpacing: "-0.03em",
+                }}
               >
                 {product.title}
               </h1>
@@ -181,17 +200,19 @@ const ProductDetails = () => {
               <div
                 className="rounded-[12px] p-5 space-y-4"
                 style={{
-                  background: "#fff",
-                  border: "1px solid rgba(0,0,0,0.07)",
-                  boxShadow:
-                    "0 0 0 1px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.04)",
+                  background: "var(--ds-background-100)",
+                  border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.07)"}`,
+                  boxShadow: `0 0 0 1px ${isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)"}, 0 2px 8px rgba(0,0,0,0.04)`,
                 }}
               >
                 <div>
                   <p className="section-label mb-1.5">Price</p>
                   <p
                     className="text-[28px] font-bold tracking-tight"
-                    style={{ color: "#171717", letterSpacing: "-0.04em" }}
+                    style={{
+                      color: "var(--ds-gray-900)",
+                      letterSpacing: "-0.04em",
+                    }}
                   >
                     ₹{Number(product.price).toLocaleString("en-IN")}
                   </p>
@@ -207,7 +228,7 @@ const ProductDetails = () => {
 
                 <div
                   style={{
-                    borderTop: "1px solid rgba(0,0,0,0.05)",
+                    borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)"}`,
                     paddingTop: 16,
                   }}
                 >
@@ -225,15 +246,15 @@ const ProductDetails = () => {
                 <div
                   className="rounded-[12px] p-5"
                   style={{
-                    background: "#fff",
-                    border: "1px solid rgba(0,0,0,0.07)",
-                    boxShadow: "0 0 0 1px rgba(0,0,0,0.03)",
+                    background: "var(--ds-background-100)",
+                    border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.07)"}`,
+                    boxShadow: `0 0 0 1px ${isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)"}`,
                   }}
                 >
                   <p className="section-label mb-3">Description</p>
                   <p
                     className="text-[13.5px] leading-relaxed"
-                    style={{ color: "#6f6f6f" }}
+                    style={{ color: "var(--ds-gray-800)" }}
                   >
                     {product.description}
                   </p>
@@ -243,7 +264,7 @@ const ProductDetails = () => {
               {/* Safety note */}
               <p
                 className="text-[11.5px] leading-relaxed px-1"
-                style={{ color: "#a8a8a8" }}
+                style={{ color: "var(--ds-gray-600)" }}
               >
                 💡 Meet the seller on campus in a safe, public place. Never
                 share personal financial information.
@@ -257,21 +278,22 @@ const ProductDetails = () => {
         <AlertDialogContent
           className="max-w-[360px] rounded-[14px] p-6"
           style={{
-            border: "1px solid rgba(0,0,0,0.08)",
+            background: "var(--ds-background-100)",
+            border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`,
             boxShadow:
-              "0 8px 24px rgba(0,0,0,0.1), 0 32px 64px rgba(0,0,0,0.08)",
+              "0 8px 24px rgba(0,0,0,0.15), 0 32px 64px rgba(0,0,0,0.1)",
           }}
         >
           <AlertDialogHeader>
             <AlertDialogTitle
               className="text-[15px] font-semibold"
-              style={{ color: "#171717" }}
+              style={{ color: "var(--ds-gray-900)" }}
             >
               Sign in required
             </AlertDialogTitle>
             <AlertDialogDescription
               className="text-[13px]"
-              style={{ color: "#6f6f6f" }}
+              style={{ color: "var(--ds-gray-800)" }}
             >
               You need to sign in to chat with the seller.
             </AlertDialogDescription>
@@ -301,7 +323,7 @@ export default function Page() {
           <Loader2
             size={20}
             className="animate-spin"
-            style={{ color: "#a8a8a8" }}
+            style={{ color: "var(--ds-gray-600)" }}
           />
         </div>
       }

@@ -96,11 +96,11 @@ const ProductCard = ({
     <article
       className="rounded-[12px] overflow-hidden flex flex-col"
       style={{
-        background: "#fff",
-        border: "1px solid rgba(0,0,0,0.06)",
+        background: "var(--ds-background-100)",
+        border: "1px solid rgba(128,128,128,0.1)",
         boxShadow: hovered
-          ? "0 0 0 1px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.08), 0 16px 32px rgba(0,0,0,0.06)"
-          : "0 0 0 1px rgba(0,0,0,0.04)",
+          ? "0 0 0 1px rgba(128,128,128,0.14), 0 4px 12px rgba(0,0,0,0.12), 0 16px 32px rgba(0,0,0,0.08)"
+          : "0 0 0 1px rgba(128,128,128,0.06)",
         transform: hovered ? "translateY(-2px)" : "translateY(0)",
         transition:
           "border-color 150ms ease, box-shadow 200ms ease, transform 200ms cubic-bezier(0.34,1.56,0.64,1)",
@@ -111,7 +111,7 @@ const ProductCard = ({
       {/* Image */}
       <div
         className="relative overflow-hidden"
-        style={{ background: "#f7f7f7" }}
+        style={{ background: "var(--ds-gray-100)" }}
       >
         <Carousel className="w-full">
           <CarouselContent>
@@ -137,20 +137,20 @@ const ProductCard = ({
               <CarouselPrevious
                 className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full transition-opacity duration-150"
                 style={{
-                  background: "rgba(255,255,255,0.9)",
+                  background: "rgba(128,128,128,0.12)",
                   backdropFilter: "blur(8px)",
-                  border: "1px solid rgba(0,0,0,0.08)",
-                  color: "#171717",
+                  border: "1px solid rgba(128,128,128,0.15)",
+                  color: "var(--ds-gray-900)",
                   opacity: hovered ? 1 : 0,
                 }}
               />
               <CarouselNext
                 className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full transition-opacity duration-150"
                 style={{
-                  background: "rgba(255,255,255,0.9)",
+                  background: "rgba(128,128,128,0.12)",
                   backdropFilter: "blur(8px)",
-                  border: "1px solid rgba(0,0,0,0.08)",
-                  color: "#171717",
+                  border: "1px solid rgba(128,128,128,0.15)",
+                  color: "var(--ds-gray-900)",
                   opacity: hovered ? 1 : 0,
                 }}
               />
@@ -164,7 +164,7 @@ const ProductCard = ({
         <div className="flex items-start justify-between gap-2">
           <h2
             className="text-[13.5px] font-semibold leading-snug line-clamp-2 flex-1"
-            style={{ color: "#171717", letterSpacing: "-0.01em" }}
+            style={{ color: "var(--ds-gray-900)", letterSpacing: "-0.01em" }}
           >
             {product.title}
           </h2>
@@ -196,10 +196,10 @@ const ProductCard = ({
               <DropdownMenuContent
                 className="w-32 p-1 rounded-[10px]"
                 style={{
-                  border: "1px solid rgba(0,0,0,0.08)",
+                  border: "1px solid rgba(128,128,128,0.12)",
                   boxShadow:
-                    "0 4px 16px rgba(0,0,0,0.08), 0 16px 40px rgba(0,0,0,0.06)",
-                  background: "rgba(255,255,255,0.95)",
+                    "0 4px 16px rgba(0,0,0,0.15), 0 16px 40px rgba(0,0,0,0.1)",
+                  background: "var(--ds-background-100)",
                   backdropFilter: "blur(20px)",
                 }}
                 align="end"
@@ -207,7 +207,7 @@ const ProductCard = ({
                 <DropdownMenuItem
                   onClick={() => alert("Edit not implemented")}
                   className="flex items-center gap-2 text-[12.5px] px-2 py-1.5 rounded-[6px] cursor-pointer"
-                  style={{ color: "#171717" }}
+                  style={{ color: "var(--ds-gray-900)" }}
                 >
                   <Pencil size={11} />
                   Edit
@@ -235,18 +235,18 @@ const ProductCard = ({
 
         <p
           className="text-[12px] leading-relaxed line-clamp-2 flex-grow"
-          style={{ color: "#8f8f8f" }}
+          style={{ color: "var(--ds-gray-700)" }}
         >
           {product.description}
         </p>
 
         <div
           className="flex items-center justify-between pt-2.5"
-          style={{ borderTop: "1px solid rgba(0,0,0,0.05)" }}
+          style={{ borderTop: "1px solid rgba(128,128,128,0.08)" }}
         >
           <span
             className="text-[16px] font-semibold"
-            style={{ color: "#171717", letterSpacing: "-0.02em" }}
+            style={{ color: "var(--ds-gray-900)", letterSpacing: "-0.02em" }}
           >
             ₹{Number(product.price).toLocaleString("en-IN")}
           </span>

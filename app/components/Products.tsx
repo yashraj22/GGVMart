@@ -31,9 +31,9 @@ const ProductSkeleton = () => (
   <div
     className="rounded-[12px] overflow-hidden"
     style={{
-      background: "#fff",
-      border: "1px solid rgba(0,0,0,0.06)",
-      boxShadow: "0 0 0 1px rgba(0,0,0,0.04)",
+      background: "var(--ds-background-100)",
+      border: "1px solid rgba(128,128,128,0.1)",
+      boxShadow: "0 0 0 1px rgba(128,128,128,0.04)",
     }}
   >
     <div className="h-[200px] skeleton" />
@@ -46,7 +46,7 @@ const ProductSkeleton = () => (
       </div>
       <div
         className="flex justify-between items-center pt-3"
-        style={{ borderTop: "1px solid rgba(0,0,0,0.04)" }}
+        style={{ borderTop: "1px solid rgba(128,128,128,0.07)" }}
       >
         <div className="skeleton h-5 w-14" />
         <div className="skeleton h-8 w-16 rounded-[8px]" />
@@ -61,18 +61,25 @@ const EmptyState = () => (
     <div
       className="w-14 h-14 rounded-[12px] flex items-center justify-center"
       style={{
-        background: "#fafafa",
-        border: "1px solid rgba(0,0,0,0.06)",
-        boxShadow: "0 0 0 1px rgba(0,0,0,0.03)",
+        background: "var(--ds-gray-100)",
+        border: "1px solid rgba(128,128,128,0.1)",
+        boxShadow: "0 0 0 1px rgba(128,128,128,0.05)",
       }}
     >
-      <PackageOpen size={22} strokeWidth={1.5} style={{ color: "#a8a8a8" }} />
+      <PackageOpen
+        size={22}
+        strokeWidth={1.5}
+        style={{ color: "var(--ds-gray-600)" }}
+      />
     </div>
     <div>
-      <p className="text-[14px] font-medium" style={{ color: "#171717" }}>
+      <p
+        className="text-[14px] font-medium"
+        style={{ color: "var(--ds-gray-900)" }}
+      >
         No listings yet
       </p>
-      <p className="text-[13px] mt-1" style={{ color: "#8f8f8f" }}>
+      <p className="text-[13px] mt-1" style={{ color: "var(--ds-gray-700)" }}>
         Be the first to list something!
       </p>
     </div>
@@ -99,11 +106,11 @@ const ProductCard = ({
         animationDelay: `${delay}ms`,
         borderRadius: 12,
         overflow: "hidden",
-        background: "#fff",
-        border: "1px solid rgba(0,0,0,0.06)",
+        background: "var(--ds-background-100)",
+        border: "1px solid rgba(128,128,128,0.1)",
         boxShadow: hovered
-          ? "0 0 0 1px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.08), 0 16px 32px rgba(0,0,0,0.06)"
-          : "0 0 0 1px rgba(0,0,0,0.04)",
+          ? "0 0 0 1px rgba(128,128,128,0.14), 0 4px 12px rgba(0,0,0,0.12), 0 16px 32px rgba(0,0,0,0.08)"
+          : "0 0 0 1px rgba(128,128,128,0.06)",
         transform: hovered ? "translateY(-3px)" : "translateY(0)",
         transition:
           "border-color 150ms ease, box-shadow 200ms ease, transform 200ms cubic-bezier(0.34,1.56,0.64,1)",
@@ -121,7 +128,7 @@ const ProductCard = ({
       >
         <div
           className="relative overflow-hidden"
-          style={{ background: "#f7f7f7", height: 200 }}
+          style={{ background: "var(--ds-gray-100)", height: 200 }}
         >
           <Carousel className="w-full h-full">
             <CarouselContent>
@@ -148,23 +155,23 @@ const ProductCard = ({
                 <CarouselPrevious
                   className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full transition-opacity duration-150"
                   style={{
-                    background: "rgba(255,255,255,0.9)",
+                    background: "rgba(128,128,128,0.12)",
                     backdropFilter: "blur(8px)",
-                    border: "1px solid rgba(0,0,0,0.08)",
-                    color: "#171717",
+                    border: "1px solid rgba(128,128,128,0.15)",
+                    color: "var(--ds-gray-900)",
                     opacity: hovered ? 1 : 0,
-                    boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+                    boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
                   }}
                 />
                 <CarouselNext
                   className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full transition-opacity duration-150"
                   style={{
-                    background: "rgba(255,255,255,0.9)",
+                    background: "rgba(128,128,128,0.12)",
                     backdropFilter: "blur(8px)",
-                    border: "1px solid rgba(0,0,0,0.08)",
-                    color: "#171717",
+                    border: "1px solid rgba(128,128,128,0.15)",
+                    color: "var(--ds-gray-900)",
                     opacity: hovered ? 1 : 0,
-                    boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+                    boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
                   }}
                 />
               </>
@@ -191,7 +198,7 @@ const ProductCard = ({
           <h2
             className="text-[13.5px] font-semibold leading-snug line-clamp-2 transition-colors duration-150"
             style={{
-              color: hovered ? "#000" : "#171717",
+              color: hovered ? "var(--ds-gray-1000)" : "var(--ds-gray-900)",
               letterSpacing: "-0.01em",
             }}
           >
@@ -202,7 +209,7 @@ const ProductCard = ({
         {/* Description */}
         <p
           className="text-[12px] leading-relaxed line-clamp-2 flex-grow"
-          style={{ color: "#8f8f8f" }}
+          style={{ color: "var(--ds-gray-700)" }}
         >
           {product.description}
         </p>
@@ -210,12 +217,12 @@ const ProductCard = ({
         {/* Footer */}
         <div
           className="flex items-center justify-between pt-3 mt-auto"
-          style={{ borderTop: "1px solid rgba(0,0,0,0.05)" }}
+          style={{ borderTop: "1px solid rgba(128,128,128,0.08)" }}
         >
           <div>
             <span
               className="text-[16px] font-semibold tracking-tight"
-              style={{ color: "#171717", letterSpacing: "-0.02em" }}
+              style={{ color: "var(--ds-gray-900)", letterSpacing: "-0.02em" }}
             >
               ₹{Number(product.price).toLocaleString("en-IN")}
             </span>
@@ -279,9 +286,9 @@ const Products = ({ prod }: { prod?: any[] }) => {
               <span
                 className="text-[11px] font-medium tabular-nums px-2 py-0.5 rounded-full"
                 style={{
-                  background: "#f2f2f2",
-                  color: "#6f6f6f",
-                  border: "1px solid rgba(0,0,0,0.06)",
+                  background: "var(--ds-gray-200)",
+                  color: "var(--ds-gray-800)",
+                  border: "1px solid rgba(128,128,128,0.1)",
                 }}
               >
                 {products.length}
@@ -314,21 +321,22 @@ const Products = ({ prod }: { prod?: any[] }) => {
         <AlertDialogContent
           className="max-w-[360px] rounded-[14px] p-6"
           style={{
-            border: "1px solid rgba(0,0,0,0.08)",
+            background: "var(--ds-background-100)",
+            border: "1px solid rgba(128,128,128,0.1)",
             boxShadow:
-              "0 0 0 1px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.1), 0 32px 64px rgba(0,0,0,0.08)",
+              "0 0 0 1px rgba(128,128,128,0.06), 0 8px 24px rgba(0,0,0,0.15), 0 32px 64px rgba(0,0,0,0.1)",
           }}
         >
           <AlertDialogHeader>
             <AlertDialogTitle
               className="text-[15px] font-semibold"
-              style={{ color: "#171717", letterSpacing: "-0.01em" }}
+              style={{ color: "var(--ds-gray-900)", letterSpacing: "-0.01em" }}
             >
               Sign in required
             </AlertDialogTitle>
             <AlertDialogDescription
               className="text-[13px] mt-1"
-              style={{ color: "#6f6f6f" }}
+              style={{ color: "var(--ds-gray-800)" }}
             >
               Sign in to chat with the seller and start a conversation.
             </AlertDialogDescription>

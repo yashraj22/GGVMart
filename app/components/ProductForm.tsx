@@ -383,6 +383,7 @@ const ProductForm = () => {
                       src={preview}
                       alt={`Preview ${i + 1}`}
                       fill
+                      sizes="(min-width: 1024px) 120px, (min-width: 640px) 96px, 22vw"
                       className="object-cover"
                     />
                     <button

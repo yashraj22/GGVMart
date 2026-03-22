@@ -138,6 +138,7 @@ const ProductDetails = () => {
                   src={product.images[selectedImage]}
                   alt={product.title}
                   fill
+                  sizes="(min-width: 1024px) 720px, 100vw"
                   className="object-contain p-8"
                   style={{ transition: "opacity 200ms ease" }}
                 />
@@ -166,6 +167,7 @@ const ProductDetails = () => {
                         src={img}
                         alt={`Thumbnail ${i + 1}`}
                         fill
+                        sizes="64px"
                         className="object-cover"
                       />
                     </button>

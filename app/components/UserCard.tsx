@@ -48,6 +48,7 @@ const UserCard = ({ userId, chatId, onUserCardClick, avatarOnly }: any) => {
             src={picture}
             alt={name || "User"}
             fill
+            sizes="36px"
             className="object-cover"
           />
         ) : (

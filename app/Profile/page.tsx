@@ -95,6 +95,7 @@ const Profile = () => {
             src={product.images[0]}
             alt={product.title}
             fill
+            sizes="56px"
             className="object-cover"
           />
         </div>
@@ -164,6 +165,7 @@ const Profile = () => {
                     src={user.user_metadata.picture}
                     alt="Profile"
                     fill
+                    sizes="64px"
                     className="object-cover"
                   />
                 ) : (

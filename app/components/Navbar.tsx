@@ -239,6 +239,7 @@ const Navbar = () => {
                             src={user.user_metadata.picture}
                             alt="Avatar"
                             fill
+                            sizes="28px"
                             className="object-cover"
                           />
                         ) : (

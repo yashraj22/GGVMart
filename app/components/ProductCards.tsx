@@ -78,6 +78,7 @@ const ProductCards = () => {
                         src={image}
                         alt={`${product.title} — Image ${index + 1}`}
                         fill
+                        sizes="320px"
                         className="object-cover group-hover:scale-[1.02] transition-transform duration-300"
                       />
                     </div>

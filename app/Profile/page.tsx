@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useUserAuth } from "../context/AuthContext";
 import MyProducts from "../components/MyProducts";
 import Image from "next/image";
@@ -11,10 +11,11 @@ import { useDispatch } from "react-redux";
 import { useTheme } from "../components/ThemeProvider";
 
 const Profile = () => {
-  const { user, logOut }: any = useUserAuth();
-  const [checkedProductIds, setCheckedProductIds] = useState([]);
-  const [productDetails, setProductDetails] = useState([]);
+  const { user, loading: authLoading, logOut }: any = useUserAuth();
+  const [productDetails, setProductDetails] = useState<any[]>([]);
   const [hasPostedAds, setHasPostedAds] = useState(false);
+  const [hasLoadedAds, setHasLoadedAds] = useState(false);
+  const [isViewedLoading, setIsViewedLoading] = useState(true);
   const dispatch = useDispatch();
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -30,39 +31,42 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    const fetchUserChats = async () => {
-      if (user?.id) {
-        try {
-          const response = await fetch(`/api/getCurrentUser?userId=${user.id}`);
-          const data = await response.json();
-          if (response.ok && data.userChats) {
-            setCheckedProductIds(data.userChats.map((c: any) => c.productId));
-          }
-        } catch (error) {
-          console.error("Error fetching user chats:", error);
-        }
-      }
-    };
-    fetchUserChats();
-  }, [user]);
+    if (authLoading) {
+      setIsViewedLoading(true);
+      return;
+    }
 
-  useEffect(() => {
-    const fetchProductDetails = async () => {
-      if (!checkedProductIds.length) return;
+    if (!user?.id) {
+      setProductDetails([]);
+      setIsViewedLoading(false);
+      return;
+    }
+
+    const fetchRecentlyViewed = async () => {
+      setIsViewedLoading(true);
       try {
-        const response = await fetch("/api/getCheckedProducts", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productIds: checkedProductIds }),
-        });
+        const response = await fetch(`/api/recently-viewed?userId=${user.id}`);
         const data = await response.json();
-        if (response.ok) setProductDetails(data.products);
+        if (response.ok) {
+          setProductDetails(data.products || []);
+        } else {
+          setProductDetails([]);
+        }
       } catch (error) {
-        console.error("Error fetching product details:", error);
+        console.error("Error fetching recently viewed products:", error);
+        setProductDetails([]);
+      } finally {
+        setIsViewedLoading(false);
       }
     };
-    fetchProductDetails();
-  }, [checkedProductIds]);
+
+    fetchRecentlyViewed();
+  }, [authLoading, user?.id]);
+
+  const handleAdsLoaded = useCallback((count: number) => {
+    setHasPostedAds(count > 0);
+    setHasLoadedAds(true);
+  }, []);
 
   /* ── Compact product card for "viewed" section ── */
   const ViewedCard = ({ product }: { product: any }) => (
@@ -226,7 +230,7 @@ const Profile = () => {
       {/* ── Content ── */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 space-y-6">
         {/* Viewed products */}
-        {productDetails.length > 0 && (
+        {(isViewedLoading || productDetails.length > 0) && (
           <Section
             icon={
               <Eye
@@ -236,14 +240,22 @@ const Profile = () => {
               />
             }
             label="Recently viewed"
-            count={productDetails.length}
+            count={isViewedLoading ? undefined : productDetails.length}
             isDark={isDark}
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5">
-              {productDetails.map((product: any, i: number) => (
-                <ViewedCard key={i} product={product} />
-              ))}
-            </div>
+            {isViewedLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5">
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <ViewedCardSkeleton key={index} isDark={isDark} />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5">
+                {productDetails.map((product: any) => (
+                  <ViewedCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
           </Section>
         )}
 
@@ -259,8 +271,9 @@ const Profile = () => {
           label="Your listings"
           isDark={isDark}
         >
-          <MyProducts onAdsLoaded={(count) => setHasPostedAds(count > 0)} />
-          {!hasPostedAds && (
+          <MyProducts onAdsLoaded={handleAdsLoaded} />
+          {(authLoading || !hasLoadedAds) && <ListingsSkeleton />}
+          {!authLoading && hasLoadedAds && !hasPostedAds && (
             <div className="flex flex-col items-center justify-center py-12 gap-4 text-center">
               <div
                 className="w-12 h-12 rounded-[12px] flex items-center justify-center"
@@ -358,6 +371,51 @@ const Section = ({
       )}
     </div>
     <div className="p-5">{children}</div>
+  </div>
+);
+
+const ViewedCardSkeleton = ({ isDark }: { isDark: boolean }) => (
+  <div
+    className="flex items-center gap-3 p-3 rounded-[10px]"
+    style={{
+      border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"}`,
+    }}
+  >
+    <div className="skeleton w-14 h-14 rounded-[8px] flex-shrink-0" />
+    <div className="flex-1 space-y-2">
+      <div className="skeleton h-3.5 w-3/4 rounded-md" />
+      <div className="skeleton h-3 w-full rounded-md" />
+      <div className="skeleton h-3.5 w-1/3 rounded-md" />
+    </div>
+  </div>
+);
+
+const ListingsSkeleton = () => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    {Array.from({ length: 4 }).map((_, index) => (
+      <div
+        key={index}
+        className="rounded-[12px] overflow-hidden"
+        style={{
+          background: "var(--ds-background-100)",
+          border: "1px solid rgba(128,128,128,0.1)",
+        }}
+      >
+        <div className="skeleton h-[180px] w-full" />
+        <div className="p-4 space-y-3">
+          <div className="skeleton h-4 w-4/5 rounded-md" />
+          <div className="skeleton h-5 w-16 rounded-full" />
+          <div className="space-y-2">
+            <div className="skeleton h-3 w-full rounded-md" />
+            <div className="skeleton h-3 w-2/3 rounded-md" />
+          </div>
+          <div className="flex items-center justify-between pt-2">
+            <div className="skeleton h-5 w-20 rounded-md" />
+            <div className="skeleton h-8 w-24 rounded-[8px]" />
+          </div>
+        </div>
+      </div>
+    ))}
   </div>
 );
 

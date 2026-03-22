@@ -7,13 +7,15 @@ import {
   useMemo,
   ReactNode,
 } from "react";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { SupabaseClient } from "@supabase/supabase-js";
 import supabase from "../util/supabaseClient";
 
-export interface User {}
+export type User = SupabaseUser;
 
 interface AuthContextType {
   user: User | null;
+  loading: boolean;
   loginWithGoogle: () => Promise<void>;
   logOut: () => Promise<void>;
   supabase: SupabaseClient;
@@ -23,6 +25,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const loginWithGoogle = async () => {
     try {
@@ -45,21 +48,34 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    // Set up a listener for auth changes right after component mounts
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setUser(session?.user || null);
-      },
-    );
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+      setLoading(false);
+    });
 
-    // Check the current session synchronously and set the user (alternative approach if available)
-    const currentSession = supabase.auth.getUser();
-    setUser(currentSession || null);
+    const loadCurrentUser = async () => {
+      try {
+        const {
+          data: { user: currentUser },
+        } = await supabase.auth.getUser();
+        setUser(currentUser ?? null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCurrentUser();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const contextValue = useMemo(
-    () => ({ user, loginWithGoogle, logOut, supabase }),
-    [user],
+    () => ({ user, loading, loginWithGoogle, logOut, supabase }),
+    [loading, user],
   );
 
   return (

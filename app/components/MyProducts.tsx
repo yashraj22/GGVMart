@@ -25,26 +25,36 @@ const MyProducts = ({
   onAdsLoaded: (count: number) => void;
 }) => {
   const [products, setProducts] = useState<any[]>([]);
-  const { user }: any = useUserAuth();
+  const { user, loading }: any = useUserAuth();
 
   useEffect(() => {
-    if (user) {
-      const fetchProducts = async () => {
-        try {
-          const response = await fetch(
-            `/api/product/myproduct/${user.identities[0].user_id}`,
-          );
-          const data = await response.json();
-          setProducts(data.products || []);
-          onAdsLoaded((data.products || []).length);
-        } catch (error) {
-          console.error("Failed to fetch products:", error);
-          onAdsLoaded(0);
-        }
-      };
-      fetchProducts();
+    if (loading) {
+      return;
     }
-  }, [user, onAdsLoaded]);
+
+    if (!user) {
+      onAdsLoaded(0);
+      return;
+    }
+
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(
+          `/api/product/myproduct/${user.identities[0].user_id}`,
+        );
+        const data = await response.json();
+        const nextProducts = data.products || [];
+        setProducts(nextProducts);
+        onAdsLoaded(nextProducts.length);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+        setProducts([]);
+        onAdsLoaded(0);
+      }
+    };
+
+    fetchProducts();
+  }, [loading, user, onAdsLoaded]);
 
   const handleDelete = async (productId: string) => {
     try {

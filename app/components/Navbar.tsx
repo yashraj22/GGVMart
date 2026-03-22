@@ -20,7 +20,12 @@ import { useDispatch } from "react-redux";
 import { useTheme } from "./ThemeProvider";
 
 const Navbar = () => {
-  const { user, loginWithGoogle, logOut }: any = useUserAuth();
+  const {
+    user,
+    loading: authLoading,
+    loginWithGoogle,
+    logOut,
+  }: any = useUserAuth();
   const dispatch = useDispatch();
   const { searchQuery, setSearchQuery, resetSearch, setProducts }: any =
     useSearch();
@@ -180,19 +185,18 @@ const Navbar = () => {
                 )}
               </button>
 
-              {!user && (
+              {!authLoading && !user && (
                 <button
                   id="sign-in-btn"
                   onClick={loginWithGoogle}
                   className="btn-primary"
                   style={{ height: 32, padding: "0 12px", fontSize: 13 }}
                 >
-                  <User size={13} strokeWidth={2} />
-                  <span className="hidden xs:inline">Sign in</span>
+                  <span>Login</span>
                 </button>
               )}
 
-              {user && (
+              {!authLoading && user && (
                 <>
                   <Link href="/AddProduct">
                     <button

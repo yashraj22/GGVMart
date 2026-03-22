@@ -19,12 +19,13 @@ const ChatBubble = ({
 }) => {
   // Format time more concisely
   const formattedTime = (() => {
-    try {
-      const d = new Date(time);
-      return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    } catch {
-      return time;
+    const d = new Date(time);
+
+    if (Number.isNaN(d.getTime())) {
+      return "";
     }
+
+    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   })();
 
   return (

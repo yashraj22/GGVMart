@@ -93,8 +93,14 @@ export default function ChatUi({
         }),
       });
       if (!res.ok) throw new Error(res.statusText);
-      const message = await res.json();
-      setMessages((prev) => [...prev, { ...message, senderId: user?.id }]);
+      const data = await res.json();
+      const sentMessage = data.message;
+
+      if (!sentMessage) {
+        throw new Error("Invalid send message response");
+      }
+
+      setMessages((prev) => [...prev, sentMessage]);
       setNewMessage("");
     } catch (error) {
       console.error("Error sending message:", error);
@@ -206,7 +212,7 @@ export default function ChatUi({
                   avatarAlt={isSender ? "You" : recipientName}
                   initials={isSender ? "Me" : recipientName?.[0] || "?"}
                   message={message.text}
-                  time={new Date(message.createdAt).toUTCString()}
+                  time={message.createdAt}
                 />
               );
             })

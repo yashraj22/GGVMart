@@ -9,43 +9,58 @@ import { Send } from "lucide-react";
 
 export default function ChatUi({
   params,
+  isParentLoading = false,
 }: {
   params: { slug: Array<string> };
+  isParentLoading?: boolean;
 }) {
   const [newMessage, setNewMessage] = useState("");
-  const { user }: any = useUserAuth();
-  const [messages, setMessages] = useState([]);
+  const { user, loading: authLoading }: any = useUserAuth();
+  const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [userData, setuserData] = useState<any>();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const ownerId = params.slug[1];
   const userId = params.slug[2] ? params.slug[2] : params.slug[1];
+  const chatId = params.slug[0];
 
   useEffect(() => {
+    if (authLoading || isParentLoading) {
+      setLoading(true);
+      return;
+    }
+
+    if (!user || !chatId) {
+      setMessages([]);
+      setLoading(false);
+      return;
+    }
+
     const fetchMessages = async () => {
+      setLoading(true);
       try {
-        if (user) {
-          const response = await fetch("/api/msg", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              chatId: params.slug[0],
-              ...(params.slug[2] && { senderId: params.slug[2] }),
-              ...(params.slug[1] && { receiverId: params.slug[1] }),
-            }),
-          });
-          const data = await response.json();
-          if (response.ok) setMessages(data.messages);
-        }
+        const response = await fetch("/api/msg", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chatId,
+            ...(params.slug[2] && { senderId: params.slug[2] }),
+            ...(params.slug[1] && { receiverId: params.slug[1] }),
+          }),
+        });
+        const data = await response.json();
+        if (response.ok) setMessages(data.messages || []);
       } catch (error) {
         console.error("Error fetching messages:", error);
+        setMessages([]);
       } finally {
         setLoading(false);
       }
     };
+
     fetchMessages();
-  }, [user, params.slug, messages]);
+  }, [authLoading, chatId, isParentLoading, params.slug, user]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -154,14 +169,18 @@ export default function ChatUi({
           ref={scrollRef}
         >
           {loading ? (
-            <div className="flex items-center justify-center h-full">
-              <div
-                className="w-5 h-5 rounded-full animate-spin"
-                style={{
-                  border: "2px solid var(--ds-gray-400)",
-                  borderTopColor: "var(--ds-gray-900)",
-                }}
-              />
+            <MessagesSkeleton />
+          ) : !chatId ? (
+            <div className="flex flex-col items-center justify-center h-full text-center gap-2">
+              <p
+                className="text-sm font-medium"
+                style={{ color: "var(--ds-gray-900)" }}
+              >
+                Select a conversation
+              </p>
+              <p className="text-xs" style={{ color: "var(--ds-gray-700)" }}>
+                Your messages will appear here.
+              </p>
             </div>
           ) : messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center gap-2">
@@ -212,10 +231,11 @@ export default function ChatUi({
               border: "1px solid var(--ds-gray-400)",
               color: "var(--ds-gray-900)",
             }}
+            disabled={!chatId || loading}
           />
           <button
             onClick={handleSendMessage}
-            disabled={!newMessage.trim()}
+            disabled={!chatId || loading || !newMessage.trim()}
             className="btn-primary flex-shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
             style={{ width: 36, height: 36, padding: 0 }}
           >
@@ -226,3 +246,23 @@ export default function ChatUi({
     </div>
   );
 }
+
+const MessagesSkeleton = () => (
+  <div className="space-y-3">
+    {Array.from({ length: 6 }).map((_, index) => {
+      const isSender = index % 2 === 1;
+      return (
+        <div
+          key={index}
+          className={`flex ${isSender ? "justify-end" : "justify-start"}`}
+        >
+          <div
+            className={`skeleton h-12 rounded-2xl ${
+              isSender ? "w-40" : "w-52"
+            }`}
+          />
+        </div>
+      );
+    })}
+  </div>
+);

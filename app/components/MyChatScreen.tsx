@@ -4,53 +4,69 @@ import UserCard from "./UserCard";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store/rootReducer";
 import { useEffect, useState } from "react";
-import supabase from "../util/supabaseClient";
 import { MessageCircle } from "lucide-react";
+import { useUserAuth } from "../context/AuthContext";
 
 const MyChatScreen = () => {
   const productdata = useSelector(
     (state: RootState) => state.data.product.data,
   );
   const chatdata = useSelector((state: RootState) => state.data.chat.data);
-  const [chatsData, setchatsData] = useState<any[]>();
+  const { user, loading: authLoading }: any = useUserAuth();
+  const [chatsData, setchatsData] = useState<any[]>([]);
   const [userId, setuserId] = useState<string | undefined>();
   const [chatId, setchatId] = useState<string | undefined>();
   const [senderId, setsenderId] = useState<string | undefined>();
+  const [isChatsLoading, setIsChatsLoading] = useState(true);
 
   useEffect(() => {
+    if (chatdata) {
+      setchatsData(chatdata);
+      setchatId((currentChatId) => currentChatId ?? chatdata[0]?.id);
+      setIsChatsLoading(false);
+      return;
+    }
+
+    if (authLoading) {
+      setIsChatsLoading(true);
+      return;
+    }
+
+    if (!productdata || productdata.length === 0) {
+      setchatsData([]);
+      setchatId(undefined);
+      setIsChatsLoading(false);
+      return;
+    }
+
     const fetchchatData = async () => {
-      if (productdata)
-        try {
-          const response = await fetch("/api/chats/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ productdata }),
-          });
-          const data = await response.json();
-          if (data.userChats.length > 0) {
-            setchatsData(data.userChats);
-            setchatId(data.userChats[0].id);
-            setuserId(data.userChats[0].userId);
-          }
-        } catch (error) {
-          console.error("Error fetching products:", error);
-        }
+      setIsChatsLoading(true);
+      try {
+        const response = await fetch("/api/chats/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productdata }),
+        });
+        const data = await response.json();
+        const nextChats = data.userChats || [];
+        setchatsData(nextChats);
+        setchatId(nextChats[0]?.id);
+        setuserId(nextChats[0]?.userId);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setchatsData([]);
+        setchatId(undefined);
+      } finally {
+        setIsChatsLoading(false);
+      }
     };
+
     fetchchatData();
-  }, [productdata]);
+  }, [authLoading, chatdata, productdata]);
 
   useEffect(() => {
-    const getIdFetch = async () => {
-      const { data } = await supabase.auth.getSession();
-      const id: string | undefined = data.session?.user.id;
-      setuserId(id);
-    };
-    getIdFetch();
-  }, []);
-
-  useEffect(() => {
-    if (chatdata) setchatsData(chatdata);
-  }, [chatdata]);
+    setuserId(user?.id);
+  }, [user?.id]);
 
   const handleUserCardClick = (
     selectedChatId: string,
@@ -86,7 +102,9 @@ const MyChatScreen = () => {
           </p>
         </div>
         <div className="flex-1 overflow-y-auto">
-          {!chatsData || chatsData.length === 0 ? (
+          {isChatsLoading ? (
+            <ChatListSkeleton />
+          ) : chatsData.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full gap-2 py-12 px-4 text-center">
               <MessageCircle
                 size={24}
@@ -120,25 +138,49 @@ const MyChatScreen = () => {
           style={{ borderBottom: "1px solid var(--ds-gray-200)" }}
         />
         <div className="flex-1 overflow-y-auto">
-          {chatsData?.map((chat) => (
-            <UserCard
-              key={chat.id}
-              userId={chat.userId}
-              chatId={chat.id}
-              isCurrentUser={chat.userId === userId}
-              onUserCardClick={handleUserCardClick}
-              avatarOnly
-            />
-          ))}
+          {isChatsLoading ? (
+            <ChatListSkeleton avatarOnly />
+          ) : (
+            chatsData?.map((chat) => (
+              <UserCard
+                key={chat.id}
+                userId={chat.userId}
+                chatId={chat.id}
+                isCurrentUser={chat.userId === userId}
+                onUserCardClick={handleUserCardClick}
+                avatarOnly
+              />
+            ))
+          )}
         </div>
       </div>
 
       {/* Chat window */}
       <div className="flex flex-1 min-w-0">
-        <ChatUi params={{ slug: [chatId, userId, senderId] }} />
+        <ChatUi
+          params={{ slug: [chatId, userId, senderId] }}
+          isParentLoading={isChatsLoading || authLoading}
+        />
       </div>
     </div>
   );
 };
+
+const ChatListSkeleton = ({ avatarOnly = false }: { avatarOnly?: boolean }) => (
+  <div>
+    {Array.from({ length: 6 }).map((_, index) => (
+      <div
+        key={index}
+        className={`flex items-center ${
+          avatarOnly ? "justify-center p-3" : "gap-3 px-4 py-3"
+        }`}
+        style={{ borderBottom: "1px solid var(--ds-gray-200)" }}
+      >
+        <div className="skeleton w-9 h-9 rounded-full flex-shrink-0" />
+        {!avatarOnly && <div className="skeleton h-3.5 w-28 rounded-md" />}
+      </div>
+    ))}
+  </div>
+);
 
 export default MyChatScreen;

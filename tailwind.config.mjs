@@ -1,22 +1,6 @@
-import type { Config } from "tailwindcss";
-
 const config = {
   darkMode: ["class"],
-  content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
-    "./src/**/*.{ts,tsx}",
-  ],
-  prefix: "",
   theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
     extend: {
       fontFamily: {
         sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
@@ -56,7 +40,6 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        /* Vercel Geist Color Tokens */
         "ds-gray": {
           100: "#fafafa",
           200: "#f2f2f2",
@@ -124,15 +107,6 @@ const config = {
       },
     },
   },
-  plugins: [
-    require("tailwindcss-animate"),
-    function ({ addUtilities }: { addUtilities: any }) {
-      addUtilities({
-        ".no-scrollbar::-webkit-scrollbar": { display: "none" },
-        ".no-scrollbar": { "-ms-overflow-style": "none", "scrollbar-width": "none" },
-      });
-    },
-  ],
-} satisfies Config;
+};
 
 export default config;

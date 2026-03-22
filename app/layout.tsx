@@ -7,7 +7,6 @@ import { AuthContextProvider } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
 import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "./components/Providers";
-import store from "./redux/store/store";
 import { SearchProvider } from "./context/SearchContext";
 import { ThemeProvider } from "./components/ThemeProvider";
 

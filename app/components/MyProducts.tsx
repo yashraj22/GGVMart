@@ -44,7 +44,7 @@ const MyProducts = ({
       };
       fetchProducts();
     }
-  }, [user]);
+  }, [user, onAdsLoaded]);
 
   const handleDelete = async (productId: string) => {
     try {
@@ -122,6 +122,7 @@ const ProductCard = ({
                     src={image}
                     alt={`${product.title} — ${i + 1}`}
                     fill
+                    sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
                     className="object-cover"
                     style={{
                       transform: hovered ? "scale(1.04)" : "scale(1)",

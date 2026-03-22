@@ -3,8 +3,9 @@ import prisma from "../../../util/prismaClient";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { userId: string } },
+  props: { params: Promise<{ userId: string }> },
 ) {
+  const params = await props.params;
   const id: string = params.userId;
 
   const product = await prisma.product.findUnique({

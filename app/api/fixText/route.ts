@@ -1,7 +1,7 @@
 import axios from "axios";
 import { NextResponse } from "next/server";
 
-export async function POST(req: any, res: NextResponse) {
+export async function POST(req: Request) {
   try {
     const { prompt } = await req.json(); // Extract the prompt from the request body
     // const prompt = "ii amm a sbudent."

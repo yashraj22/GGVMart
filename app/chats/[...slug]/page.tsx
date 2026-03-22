@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import ChatBubble from "@/app/components/ChatBubble";
 import { useUserAuth } from "@/app/context/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -7,7 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { fetchUserDetail } from "@/app/util/actions";
 
-export default function Page({ params }: { params: { slug: string } }) {
+export default function Page(props: { params: Promise<{ slug: string[] }> }) {
+  const params = use(props.params);
+  const chatId = params.slug[0];
   const [newMessage, setNewMessage] = useState("");
   const { user }: any = useUserAuth();
   const [messages, setMessages] = useState([]);
@@ -28,7 +30,7 @@ export default function Page({ params }: { params: { slug: string } }) {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ chatId: params.slug[0] }),
+            body: JSON.stringify({ chatId }),
           });
           const data = await response.json();
           if (response.ok) {
@@ -45,7 +47,7 @@ export default function Page({ params }: { params: { slug: string } }) {
     };
 
     fetchMessages();
-  }, [user, messages]);
+  }, [user, chatId]);
 
   useEffect(() => {
     if (autoScroll && scrollRef.current) {
@@ -83,7 +85,7 @@ export default function Page({ params }: { params: { slug: string } }) {
         },
         body: JSON.stringify({
           text: newMessage,
-          chatId: params.slug[0],
+          chatId,
           senderId: user?.id,
           receiverId: ownerId,
         }),

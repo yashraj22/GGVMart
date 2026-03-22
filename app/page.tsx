@@ -48,7 +48,7 @@ const HomePage = () => {
       getIdFetch();
     }
     fetchProducts();
-  }, [user, dispatch]);
+  }, [user, dispatch, setProducts]);
 
   const handleCategory = async (cat: string | null) => {
     setActiveCategory(cat);

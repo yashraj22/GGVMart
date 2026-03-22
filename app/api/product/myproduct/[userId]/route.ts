@@ -6,9 +6,10 @@ import { NextResponse } from "next/server";
 // const prisma = new PrismaClient();
 
 export async function GET(
-  req: Request,
-  { params }: { params: { userId: string } },
+  _req: Request,
+  props: { params: Promise<{ userId: string }> },
 ) {
+  const params = await props.params;
   const userId = params.userId;
   const products = await prisma.product.findMany({
     where: {

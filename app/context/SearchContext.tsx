@@ -10,7 +10,7 @@ import React, {
 interface SearchContextProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  products: any[];
+  products: any[] | undefined;
   setProducts: (products: any[]) => void;
   resetSearch: () => void;
 }
@@ -23,7 +23,7 @@ const SearchContext = createContext<SearchContextProps | undefined>(undefined);
 
 export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[] | undefined>(undefined);
 
   const resetSearch = async () => {
     setSearchQuery("");

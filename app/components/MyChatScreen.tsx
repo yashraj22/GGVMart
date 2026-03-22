@@ -160,6 +160,7 @@ const MyChatScreen = () => {
         <ChatUi
           params={{ slug: [chatId, userId, senderId] }}
           isParentLoading={isChatsLoading || authLoading}
+          showProductSheet
         />
       </div>
     </div>

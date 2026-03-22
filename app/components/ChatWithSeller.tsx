@@ -1,8 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useUserAuth } from "@/app/context/AuthContext";
-import { navigate } from "../util/redirect";
-import supabase from "../util/supabaseClient";
+import { useRouter } from "next/navigation";
 import { MessageCircle, Loader2 } from "lucide-react";
 
 const ChatWithSeller = ({
@@ -16,35 +15,33 @@ const ChatWithSeller = ({
   onAuthRequired?: () => void;
   large?: boolean;
 }) => {
-  const [userId, setUserId] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const { user }: any = useUserAuth();
-
-  useEffect(() => {
-    const getIdFetch = async () => {
-      const { data } = await supabase.auth.getSession();
-      const id: any = data.session?.user.id;
-      if (id) setUserId(id);
-    };
-    getIdFetch();
-  }, []);
+  const router = useRouter();
 
   const handleChatWithSeller = async () => {
-    if (!user) {
+    const currentUserId = user?.id;
+
+    if (!currentUserId) {
       onAuthRequired?.();
       return;
     }
+
     setLoading(true);
+
     try {
       const response = await fetch("/api/chart", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, productId }),
+        body: JSON.stringify({ userId: currentUserId, productId }),
       });
-      if (response.ok) {
-        const data: any = await response.json();
-        navigate(`chats/${data?.chat.id}/${receiverId}`);
+
+      if (!response.ok) {
+        throw new Error(`Failed to create chat: ${response.status}`);
       }
+
+      const data: any = await response.json();
+      router.push(`/chats/${data.chat.id}/${receiverId}`);
     } catch (error) {
       console.error("Error calling API:", error);
     } finally {
@@ -52,7 +49,7 @@ const ChatWithSeller = ({
     }
   };
 
-  if (userId === receiverId) return null;
+  if (user?.id === receiverId) return null;
 
   if (large) {
     return (

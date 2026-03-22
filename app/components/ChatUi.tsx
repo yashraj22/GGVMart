@@ -3,16 +3,18 @@ import { useEffect, useRef, useState } from "react";
 import ChatBubble from "@/app/components/ChatBubble";
 import { useUserAuth } from "@/app/context/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import SheetSide, { ProductSideSheet } from "@/app/components/ProductSideSheet";
+import { ProductSideSheet } from "@/app/components/ProductSideSheet";
 import { fetchUserDetail } from "../util/actions";
 import { Send } from "lucide-react";
 
 export default function ChatUi({
   params,
   isParentLoading = false,
+  showProductSheet = false,
 }: {
   params: { slug: Array<string> };
   isParentLoading?: boolean;
+  showProductSheet?: boolean;
 }) {
   const [newMessage, setNewMessage] = useState("");
   const { user, loading: authLoading }: any = useUserAuth();
@@ -110,10 +112,7 @@ export default function ChatUi({
   const recipientPicture = userData?.user?.raw_user_meta_data?.picture;
 
   return (
-    <div
-      className="flex flex-col min-w-full"
-      style={{ height: "calc(100vh - 56px)" }}
-    >
+    <div className="flex flex-col min-w-full h-full">
       <div
         className="flex flex-col h-full min-w-full overflow-hidden"
         style={{
@@ -160,7 +159,7 @@ export default function ChatUi({
               </p>
             </div>
           </div>
-          <ProductSideSheet />
+          {showProductSheet ? <ProductSideSheet /> : null}
         </div>
 
         {/* Messages */}

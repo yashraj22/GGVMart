@@ -1,53 +1,47 @@
-// import { PrismaClient } from "@prisma/client";
 import prisma from "../../util/prismaClient";
-
-// const prisma = new PrismaClient();
-import { useId } from "react";
+import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  console.log("====================================");
-  console.log("hello from api");
-  console.log("====================================");
-  var chat: {
-    id: string;
-    userId: string;
-    productId: string;
-  } = { id: "", userId: "", productId: "" };
   try {
     const { userId, productId } = await request.json();
 
-    const chatExists = await prisma.chat.findFirst({
+    if (!userId || !productId) {
+      return NextResponse.json(
+        { error: "userId and productId are required" },
+        { status: 400 },
+      );
+    }
+
+    const existingChat = await prisma.chat.findFirst({
       where: {
-        productId: productId,
-        userId: userId,
+        productId,
+        userId,
+      },
+      select: {
+        id: true,
       },
     });
 
-    if (!chatExists) {
-      console.log("Product does not exist in the chat table");
-      // Handle the case when the product does not exist
-      // Create the message in the database
-      chat = await prisma.chat.create({
-        data: {
-          userId: userId, // Assuming userId is available in the request body
-          productId: productId, // Assuming productId is available in the request body
-        },
-      });
-    } else {
-      console.log("Product exists in the chat table");
-      // Handle the case when the product exists
-      chat = chatExists;
+    if (existingChat) {
+      return NextResponse.json({ chat: existingChat }, { status: 200 });
     }
 
-    // Return a success response with the created message data
-    console.log("=================chatId===================");
-    console.log(chat);
-    console.log("====================================");
-    return new Response(JSON.stringify({ chat, status: 201 }));
-  } catch (error) {
-    console.error("Error creating message:", error);
-    // Return a JSON response with an error message and status 500
+    const chat = await prisma.chat.create({
+      data: {
+        userId,
+        productId,
+      },
+      select: {
+        id: true,
+      },
+    });
 
-    return new Response(JSON.stringify({ useId, status: 500 }));
+    return NextResponse.json({ chat }, { status: 201 });
+  } catch (error) {
+    console.error("Error creating chat:", error);
+    return NextResponse.json(
+      { error: "Failed to create chat" },
+      { status: 500 },
+    );
   }
 }
